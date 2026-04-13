@@ -1,0 +1,261 @@
+04:00:00 | jarvis.reminders | INFO | Reminder checker started
+04:00:00 | jarvis | INFO | Core systems initialized
+04:00:33 | jarvis.app_control | ERROR | Failed to open Spotify: [Errno 2] No such file or directory: 'spotify'
+04:00:43 | jarvis.reminders | INFO | Reminder checker started
+04:00:43 | jarvis | INFO | Core systems initialized
+04:00:43 | jarvis | INFO |   It's quite late, sir. How can I help?
+04:00:43 | jarvis | INFO | Voice disabled — text-only mode
+04:00:43 | jarvis | INFO | Text-only mode — type commands below (type 'quit' to exit)
+04:00:43 | jarvis | INFO | J.A.R.V.I.S offline. Goodbye, sir.
+04:12:11 | jarvis.reminders | INFO | Reminder checker started
+04:12:11 | jarvis | INFO | Core systems initialized
+04:15:41 | jarvis.reminders | INFO | Reminder checker started
+04:15:41 | jarvis | INFO | Core systems initialized
+04:15:53 | jarvis.reminders | INFO | Reminder checker started
+04:15:53 | jarvis | INFO | Core systems initialized
+04:15:53 | jarvis | INFO |   It's quite late, sir. How can I help?
+04:15:53 | jarvis | INFO | Initializing voice engine...
+04:15:53 | jarvis | INFO |   ✓ Speech-to-Text loaded (small)
+04:15:53 | jarvis | INFO |   ✓ Text-to-Speech loaded
+04:15:53 | jarvis | INFO |   ✓ Wake word detector loaded
+04:15:53 | jarvis | INFO | Voice engine ready — say 'Jarvis' to begin
+04:15:53 | jarvis | INFO |   🔊 Jarvis: "It's quite late, sir. How can I help?"
+04:15:53 | jarvis.tts | INFO | Piper TTS not found, using espeak-ng fallback
+04:15:53 | jarvis.tts | ERROR | All TTS engines failed: [Errno 2] No such file or directory: 'espeak'
+04:15:53 | jarvis | INFO | Starting wake word listener...
+04:15:53 | jarvis.wake_word | INFO | Wake word detector started (word: 'jarvis', threshold: 0.5)
+04:15:53 | jarvis.wake_word | WARNING | Wake word dependencies not installed: No module named 'pyaudio'
+04:15:53 | jarvis.wake_word | WARNING | Install with: pip install openwakeword pyaudio
+04:17:29 | jarvis | INFO | Received signal 2, shutting down...
+04:17:30 | jarvis.wake_word | INFO | Wake word detector stopped
+04:17:30 | jarvis | INFO | J.A.R.V.I.S offline. Goodbye, sir.
+04:21:45 | jarvis.reminders | INFO | Reminder checker started
+04:21:45 | jarvis | INFO | Core systems initialized
+04:21:45 | jarvis | INFO |   It's quite late, sir. How can I help?
+04:21:45 | jarvis | INFO | Initializing voice engine...
+04:21:46 | jarvis | INFO |   ✓ Speech-to-Text loaded (small)
+04:21:46 | jarvis | INFO |   ✓ Text-to-Speech loaded
+04:21:46 | jarvis | INFO |   ✓ Wake word detector loaded
+04:21:46 | jarvis | INFO | Voice engine ready — say 'Jarvis' to begin
+04:21:46 | jarvis | INFO |   🔊 Jarvis: "It's quite late, sir. How can I help?"
+04:21:46 | jarvis.tts | INFO | Piper TTS not found, using espeak-ng fallback
+04:21:49 | jarvis | INFO | Starting wake word listener...
+04:21:49 | jarvis.wake_word | INFO | Wake word detector started (word: 'jarvis', threshold: 0.5)
+04:21:49 | jarvis.wake_word | ERROR | Wake word detector error: [ONNXRuntimeError] : 3 : NO_SUCHFILE : Load model from /home/ts/.local/lib/python3.10/site-packages/openwakeword/resources/models/hey_jarvis_v0.1.onnx failed:Load model /home/ts/.local/lib/python3.10/site-packages/openwakeword/resources/models/hey_jarvis_v0.1.onnx failed. File doesn't exist
+Traceback (most recent call last):
+  File "/home/ts/Desktop/Ai workspace/jarvis/voice_engine/wake_word.py", line 57, in _listen_loop
+    self._model = Model(
+  File "/home/ts/.local/lib/python3.10/site-packages/openwakeword/utils.py", line 686, in wrapped
+    return func(*args, **new_kwargs)
+  File "/home/ts/.local/lib/python3.10/site-packages/openwakeword/model.py", line 153, in __init__
+    self.models[mdl_name] = ort.InferenceSession(mdl_path, sess_options=sessionOptions,
+  File "/home/ts/.local/lib/python3.10/site-packages/onnxruntime/capi/onnxruntime_inference_collection.py", line 485, in __init__
+    self._create_inference_session(providers, provider_options, disabled_optimizers)
+  File "/home/ts/.local/lib/python3.10/site-packages/onnxruntime/capi/onnxruntime_inference_collection.py", line 573, in _create_inference_session
+    sess = C.InferenceSession(session_options, self._model_path, True, self._read_config_from_model)
+onnxruntime.capi.onnxruntime_pybind11_state.NoSuchFile: [ONNXRuntimeError] : 3 : NO_SUCHFILE : Load model from /home/ts/.local/lib/python3.10/site-packages/openwakeword/resources/models/hey_jarvis_v0.1.onnx failed:Load model /home/ts/.local/lib/python3.10/site-packages/openwakeword/resources/models/hey_jarvis_v0.1.onnx failed. File doesn't exist
+04:22:17 | jarvis | INFO | Received signal 2, shutting down...
+04:22:18 | jarvis.wake_word | INFO | Wake word detector stopped
+04:22:18 | jarvis | INFO | J.A.R.V.I.S offline. Goodbye, sir.
+04:24:14 | jarvis.reminders | INFO | Reminder checker started
+04:24:14 | jarvis | INFO | Core systems initialized
+04:24:14 | jarvis | INFO |   It's quite late, sir. How can I help?
+04:24:14 | jarvis | INFO | Initializing voice engine...
+04:24:14 | jarvis | INFO |   ✓ Speech-to-Text loaded (small)
+04:24:14 | jarvis | INFO |   ✓ Text-to-Speech loaded
+04:24:14 | jarvis | INFO |   ✓ Wake word detector loaded
+04:24:14 | jarvis | INFO | Voice engine ready — say 'Jarvis' to begin
+04:24:14 | jarvis | INFO |   🔊 Jarvis: "It's quite late, sir. How can I help?"
+04:24:14 | jarvis.tts | INFO | Piper TTS not found, using espeak-ng fallback
+04:24:17 | jarvis | INFO | Starting wake word listener...
+04:24:17 | jarvis.wake_word | INFO | Wake word detector started (word: 'jarvis', threshold: 0.5)
+04:24:17 | jarvis.wake_word | ERROR | Wake word detector error: [ONNXRuntimeError] : 3 : NO_SUCHFILE : Load model from /home/ts/.local/lib/python3.10/site-packages/openwakeword/resources/models/hey_jarvis_v0.1.onnx failed:Load model /home/ts/.local/lib/python3.10/site-packages/openwakeword/resources/models/hey_jarvis_v0.1.onnx failed. File doesn't exist
+Traceback (most recent call last):
+  File "/home/ts/Desktop/Ai workspace/jarvis/voice_engine/wake_word.py", line 57, in _listen_loop
+    self._model = Model(
+  File "/home/ts/.local/lib/python3.10/site-packages/openwakeword/utils.py", line 686, in wrapped
+    return func(*args, **new_kwargs)
+  File "/home/ts/.local/lib/python3.10/site-packages/openwakeword/model.py", line 153, in __init__
+    self.models[mdl_name] = ort.InferenceSession(mdl_path, sess_options=sessionOptions,
+  File "/home/ts/.local/lib/python3.10/site-packages/onnxruntime/capi/onnxruntime_inference_collection.py", line 485, in __init__
+    self._create_inference_session(providers, provider_options, disabled_optimizers)
+  File "/home/ts/.local/lib/python3.10/site-packages/onnxruntime/capi/onnxruntime_inference_collection.py", line 573, in _create_inference_session
+    sess = C.InferenceSession(session_options, self._model_path, True, self._read_config_from_model)
+onnxruntime.capi.onnxruntime_pybind11_state.NoSuchFile: [ONNXRuntimeError] : 3 : NO_SUCHFILE : Load model from /home/ts/.local/lib/python3.10/site-packages/openwakeword/resources/models/hey_jarvis_v0.1.onnx failed:Load model /home/ts/.local/lib/python3.10/site-packages/openwakeword/resources/models/hey_jarvis_v0.1.onnx failed. File doesn't exist
+04:24:28 | jarvis | INFO | Received signal 2, shutting down...
+04:24:29 | jarvis.wake_word | INFO | Wake word detector stopped
+04:24:29 | jarvis | INFO | J.A.R.V.I.S offline. Goodbye, sir.
+04:25:30 | jarvis.reminders | INFO | Reminder checker started
+04:25:30 | jarvis | INFO | Core systems initialized
+04:25:30 | jarvis | INFO |   It's quite late, sir. How can I help?
+04:25:30 | jarvis | INFO | Initializing voice engine...
+04:25:30 | jarvis | INFO |   ✓ Speech-to-Text loaded (small)
+04:25:30 | jarvis | INFO |   ✓ Text-to-Speech loaded
+04:25:30 | jarvis | INFO |   ✓ Wake word detector loaded
+04:25:30 | jarvis | INFO | Voice engine ready — say 'Jarvis' to begin
+04:25:30 | jarvis | INFO |   🔊 Jarvis: "It's quite late, sir. How can I help?"
+04:25:30 | jarvis.tts | INFO | Piper TTS not found, using espeak-ng fallback
+04:25:34 | jarvis | INFO | Starting wake word listener...
+04:25:34 | jarvis.wake_word | INFO | Wake word detector started (word: 'jarvis', threshold: 0.5)
+04:25:34 | jarvis.wake_word | ERROR | Wake word detector error: [ONNXRuntimeError] : 3 : NO_SUCHFILE : Load model from /home/ts/.local/lib/python3.10/site-packages/openwakeword/resources/models/hey_jarvis_v0.1.onnx failed:Load model /home/ts/.local/lib/python3.10/site-packages/openwakeword/resources/models/hey_jarvis_v0.1.onnx failed. File doesn't exist
+Traceback (most recent call last):
+  File "/home/ts/Desktop/Ai workspace/jarvis/voice_engine/wake_word.py", line 57, in _listen_loop
+    self._model = Model(
+  File "/home/ts/.local/lib/python3.10/site-packages/openwakeword/utils.py", line 686, in wrapped
+    return func(*args, **new_kwargs)
+  File "/home/ts/.local/lib/python3.10/site-packages/openwakeword/model.py", line 153, in __init__
+    self.models[mdl_name] = ort.InferenceSession(mdl_path, sess_options=sessionOptions,
+  File "/home/ts/.local/lib/python3.10/site-packages/onnxruntime/capi/onnxruntime_inference_collection.py", line 485, in __init__
+    self._create_inference_session(providers, provider_options, disabled_optimizers)
+  File "/home/ts/.local/lib/python3.10/site-packages/onnxruntime/capi/onnxruntime_inference_collection.py", line 573, in _create_inference_session
+    sess = C.InferenceSession(session_options, self._model_path, True, self._read_config_from_model)
+onnxruntime.capi.onnxruntime_pybind11_state.NoSuchFile: [ONNXRuntimeError] : 3 : NO_SUCHFILE : Load model from /home/ts/.local/lib/python3.10/site-packages/openwakeword/resources/models/hey_jarvis_v0.1.onnx failed:Load model /home/ts/.local/lib/python3.10/site-packages/openwakeword/resources/models/hey_jarvis_v0.1.onnx failed. File doesn't exist
+04:25:43 | jarvis | INFO | Received signal 2, shutting down...
+04:25:44 | jarvis.wake_word | INFO | Wake word detector stopped
+04:25:44 | jarvis | INFO | J.A.R.V.I.S offline. Goodbye, sir.
+04:25:56 | jarvis.reminders | INFO | Reminder checker started
+04:25:56 | jarvis | INFO | Core systems initialized
+04:25:56 | jarvis | INFO |   It's quite late, sir. How can I help?
+04:25:56 | jarvis | INFO | Initializing voice engine...
+04:25:56 | jarvis | INFO |   ✓ Speech-to-Text loaded (small)
+04:25:56 | jarvis | INFO |   ✓ Text-to-Speech loaded
+04:25:56 | jarvis | INFO |   ✓ Wake word detector loaded
+04:25:56 | jarvis | INFO | Voice engine ready — say 'Jarvis' to begin
+04:25:56 | jarvis | INFO |   🔊 Jarvis: "It's quite late, sir. How can I help?"
+04:25:56 | jarvis.tts | INFO | Piper TTS not found, using espeak-ng fallback
+04:26:00 | jarvis | INFO | Starting wake word listener...
+04:26:00 | jarvis.wake_word | INFO | Wake word detector started (word: 'jarvis', threshold: 0.5)
+04:26:00 | jarvis.wake_word | ERROR | Wake word detector error: [ONNXRuntimeError] : 3 : NO_SUCHFILE : Load model from /home/ts/.local/lib/python3.10/site-packages/openwakeword/resources/models/hey_jarvis_v0.1.onnx failed:Load model /home/ts/.local/lib/python3.10/site-packages/openwakeword/resources/models/hey_jarvis_v0.1.onnx failed. File doesn't exist
+Traceback (most recent call last):
+  File "/home/ts/Desktop/Ai workspace/jarvis/voice_engine/wake_word.py", line 57, in _listen_loop
+    self._model = Model(
+  File "/home/ts/.local/lib/python3.10/site-packages/openwakeword/utils.py", line 686, in wrapped
+    return func(*args, **new_kwargs)
+  File "/home/ts/.local/lib/python3.10/site-packages/openwakeword/model.py", line 153, in __init__
+    self.models[mdl_name] = ort.InferenceSession(mdl_path, sess_options=sessionOptions,
+  File "/home/ts/.local/lib/python3.10/site-packages/onnxruntime/capi/onnxruntime_inference_collection.py", line 485, in __init__
+    self._create_inference_session(providers, provider_options, disabled_optimizers)
+  File "/home/ts/.local/lib/python3.10/site-packages/onnxruntime/capi/onnxruntime_inference_collection.py", line 573, in _create_inference_session
+    sess = C.InferenceSession(session_options, self._model_path, True, self._read_config_from_model)
+onnxruntime.capi.onnxruntime_pybind11_state.NoSuchFile: [ONNXRuntimeError] : 3 : NO_SUCHFILE : Load model from /home/ts/.local/lib/python3.10/site-packages/openwakeword/resources/models/hey_jarvis_v0.1.onnx failed:Load model /home/ts/.local/lib/python3.10/site-packages/openwakeword/resources/models/hey_jarvis_v0.1.onnx failed. File doesn't exist
+04:28:22 | jarvis | INFO | Received signal 2, shutting down...
+04:28:23 | jarvis.wake_word | INFO | Wake word detector stopped
+04:28:23 | jarvis | INFO | J.A.R.V.I.S offline. Goodbye, sir.
+04:28:42 | jarvis.reminders | INFO | Reminder checker started
+04:28:42 | jarvis | INFO | Core systems initialized
+04:28:42 | jarvis | INFO |   It's quite late, sir. How can I help?
+04:28:42 | jarvis | INFO | Initializing voice engine...
+04:28:42 | jarvis | INFO |   ✓ Speech-to-Text loaded (small)
+04:28:42 | jarvis | INFO |   ✓ Text-to-Speech loaded
+04:28:42 | jarvis | INFO |   ✓ Wake word detector loaded
+04:28:42 | jarvis | INFO | Voice engine ready — say 'Jarvis' to begin
+04:28:42 | jarvis | INFO |   🔊 Jarvis: "It's quite late, sir. How can I help?"
+04:28:42 | jarvis.tts | INFO | Piper TTS not found, using espeak-ng fallback
+04:28:45 | jarvis | INFO | Starting wake word listener...
+04:28:45 | jarvis.wake_word | INFO | Wake word detector started (word: 'jarvis', threshold: 0.5)
+04:28:46 | jarvis.wake_word | ERROR | Wake word detector error: [ONNXRuntimeError] : 3 : NO_SUCHFILE : Load model from /home/ts/.local/lib/python3.10/site-packages/openwakeword/resources/models/hey_jarvis_v0.1.onnx failed:Load model /home/ts/.local/lib/python3.10/site-packages/openwakeword/resources/models/hey_jarvis_v0.1.onnx failed. File doesn't exist
+Traceback (most recent call last):
+  File "/home/ts/Desktop/Ai workspace/jarvis/voice_engine/wake_word.py", line 57, in _listen_loop
+    self._model = Model(
+  File "/home/ts/.local/lib/python3.10/site-packages/openwakeword/utils.py", line 686, in wrapped
+    return func(*args, **new_kwargs)
+  File "/home/ts/.local/lib/python3.10/site-packages/openwakeword/model.py", line 153, in __init__
+    self.models[mdl_name] = ort.InferenceSession(mdl_path, sess_options=sessionOptions,
+  File "/home/ts/.local/lib/python3.10/site-packages/onnxruntime/capi/onnxruntime_inference_collection.py", line 485, in __init__
+    self._create_inference_session(providers, provider_options, disabled_optimizers)
+  File "/home/ts/.local/lib/python3.10/site-packages/onnxruntime/capi/onnxruntime_inference_collection.py", line 573, in _create_inference_session
+    sess = C.InferenceSession(session_options, self._model_path, True, self._read_config_from_model)
+onnxruntime.capi.onnxruntime_pybind11_state.NoSuchFile: [ONNXRuntimeError] : 3 : NO_SUCHFILE : Load model from /home/ts/.local/lib/python3.10/site-packages/openwakeword/resources/models/hey_jarvis_v0.1.onnx failed:Load model /home/ts/.local/lib/python3.10/site-packages/openwakeword/resources/models/hey_jarvis_v0.1.onnx failed. File doesn't exist
+04:40:55 | jarvis.reminders | INFO | Reminder checker started
+04:40:55 | jarvis | INFO | Core systems initialized
+04:40:55 | jarvis | INFO |   It's quite late, sir. How can I help?
+04:40:55 | jarvis | INFO | Initializing voice engine...
+04:40:55 | jarvis | ERROR | Failed to initialize voice engine: expected 'except' or 'finally' block (wake_word.py, line 57)
+04:40:55 | jarvis | INFO | Text-only mode — type commands below (type 'quit' to exit)
+04:41:02 | jarvis | INFO |   🧠 Intent: greeting | Entities: {}
+04:41:02 | jarvis | INFO |   ✅ It's quite late, sir. How can I help? (1ms)
+04:41:02 | jarvis | INFO |   🔊 Jarvis: "It's quite late, sir. How can I help?"
+04:41:36 | jarvis | INFO | Received signal 2, shutting down...
+04:41:37 | jarvis | INFO | Received signal 2, shutting down...
+04:41:39 | jarvis | INFO | Received signal 2, shutting down...
+04:41:41 | jarvis | INFO | Received signal 2, shutting down...
+04:41:42 | jarvis | INFO | Received signal 2, shutting down...
+04:41:42 | jarvis | INFO | Received signal 2, shutting down...
+04:41:51 | jarvis | INFO |   🧠 Intent: ai_query | Entities: {'query': 'python3 -c "import sounddevice as sd; import numpy as np; duration=5; fs=16000; print(\'Speak now...\'); audio=sd.rec(int(duration*fs), samplerate=fs, channels=1, dtype=\'float32\', device=0); sd.wait(); print(\'Max volume:\', np.max(np.abs(audio)))"'}
+04:41:51 | jarvis | INFO |   ❌ I don't know how to handle the intent: ai_query (3ms)
+04:41:51 | jarvis | INFO |   🔊 Jarvis: "I don't know how to handle the intent: ai_query"
+04:41:55 | jarvis | INFO | J.A.R.V.I.S offline. Goodbye, sir.
+04:51:06 | jarvis.reminders | INFO | Reminder checker started
+04:51:06 | jarvis | INFO | Core systems initialized
+04:51:06 | jarvis | INFO |   It's quite late, sir. How can I help?
+04:51:06 | jarvis | INFO | Initializing voice engine...
+04:51:06 | jarvis | ERROR | Failed to initialize voice engine: expected 'except' or 'finally' block (wake_word.py, line 57)
+04:51:06 | jarvis | INFO | Text-only mode — type commands below (type 'quit' to exit)
+04:55:44 | jarvis.reminders | INFO | Reminder checker started
+04:55:44 | jarvis | INFO | Core systems initialized
+04:55:44 | jarvis | INFO |   It's quite late, sir. How can I help?
+04:55:44 | jarvis | INFO | Initializing voice engine...
+04:55:44 | jarvis | ERROR | Failed to initialize voice engine: expected 'except' or 'finally' block (wake_word.py, line 57)
+04:55:44 | jarvis | INFO | Text-only mode — type commands below (type 'quit' to exit)
+04:57:12 | jarvis | INFO | Received signal 2, shutting down...
+04:57:19 | jarvis | INFO | Received signal 2, shutting down...
+04:57:21 | jarvis | INFO | Received signal 2, shutting down...
+04:57:21 | jarvis | INFO | Received signal 2, shutting down...
+04:57:33 | jarvis | INFO | Received signal 2, shutting down...
+04:57:56 | jarvis | INFO | Received signal 2, shutting down...
+04:58:43 | jarvis | INFO | Received signal 15, shutting down...
+05:00:02 | jarvis.reminders | INFO | Reminder checker started
+05:00:02 | jarvis | INFO | Core systems initialized
+05:00:02 | jarvis | INFO |   It's quite late, sir. How can I help?
+05:00:02 | jarvis | INFO | Initializing voice engine...
+05:00:02 | jarvis | INFO |   ✓ Speech-to-Text loaded (small)
+05:00:02 | jarvis | INFO |   ✓ Text-to-Speech loaded
+05:00:02 | jarvis | INFO |   ✓ Wake word detector loaded
+05:00:02 | jarvis | INFO | Voice engine ready — say 'Jarvis' to begin
+05:00:02 | jarvis | INFO |   🔊 Jarvis: "It's quite late, sir. How can I help?"
+05:00:02 | jarvis.tts | INFO | Piper TTS not found, using espeak-ng fallback
+05:00:05 | jarvis | INFO | Starting wake word listener...
+05:00:05 | jarvis.wake_word | INFO | Wake word detector started (word: 'jarvis', threshold: 0.5)
+05:00:06 | jarvis.wake_word | ERROR | Wake word detector error: [Errno -9998] Invalid number of channels
+Traceback (most recent call last):
+  File "/home/ts/Desktop/Ai workspace/jarvis/voice_engine/wake_word.py", line 64, in _listen_loop
+    stream = pa.open(
+  File "/usr/lib/python3/dist-packages/pyaudio.py", line 750, in open
+    stream = Stream(self, *args, **kwargs)
+  File "/usr/lib/python3/dist-packages/pyaudio.py", line 441, in __init__
+    self._stream = pa.open(**arguments)
+OSError: [Errno -9998] Invalid number of channels
+05:00:46 | jarvis.reminders | INFO | Reminder checker started
+05:00:46 | jarvis | INFO | Core systems initialized
+05:00:46 | jarvis | INFO |   It's quite late, sir. How can I help?
+05:00:46 | jarvis | INFO | Initializing voice engine...
+05:00:46 | jarvis | INFO |   ✓ Speech-to-Text loaded (small)
+05:00:46 | jarvis | INFO |   ✓ Text-to-Speech loaded
+05:00:46 | jarvis | INFO |   ✓ Wake word detector loaded
+05:00:46 | jarvis | INFO | Voice engine ready — say 'Jarvis' to begin
+05:00:46 | jarvis | INFO |   🔊 Jarvis: "It's quite late, sir. How can I help?"
+05:00:46 | jarvis.tts | INFO | Piper TTS not found, using espeak-ng fallback
+05:00:49 | jarvis | INFO | Starting wake word listener...
+05:00:49 | jarvis.wake_word | INFO | Wake word detector started (word: 'jarvis', threshold: 0.5)
+05:00:49 | jarvis.wake_word | ERROR | Wake word detector error: [Errno -9998] Invalid number of channels
+Traceback (most recent call last):
+  File "/home/ts/Desktop/Ai workspace/jarvis/voice_engine/wake_word.py", line 64, in _listen_loop
+    stream = pa.open(
+  File "/usr/lib/python3/dist-packages/pyaudio.py", line 750, in open
+    stream = Stream(self, *args, **kwargs)
+  File "/usr/lib/python3/dist-packages/pyaudio.py", line 441, in __init__
+    self._stream = pa.open(**arguments)
+OSError: [Errno -9998] Invalid number of channels
+05:01:07 | jarvis.reminders | INFO | Reminder checker started
+05:01:07 | jarvis | INFO | Core systems initialized
+05:01:07 | jarvis | INFO |   It's quite late, sir. How can I help?
+05:01:07 | jarvis | INFO | Initializing voice engine...
+05:01:07 | jarvis | INFO |   ✓ Speech-to-Text loaded (small)
+05:01:07 | jarvis | INFO |   ✓ Text-to-Speech loaded
+05:01:07 | jarvis | INFO |   ✓ Wake word detector loaded
+05:01:07 | jarvis | INFO | Voice engine ready — say 'Jarvis' to begin
+05:01:07 | jarvis | INFO |   🔊 Jarvis: "It's quite late, sir. How can I help?"
+05:01:07 | jarvis.tts | INFO | Piper TTS not found, using espeak-ng fallback
+05:01:10 | jarvis | INFO | Starting wake word listener...
+05:01:10 | jarvis.wake_word | INFO | Wake word detector started (word: 'jarvis', threshold: 0.5)
+05:01:10 | jarvis.wake_word | INFO | Audio stream opened. Listening for wake word...

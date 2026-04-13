@@ -1,0 +1,22 @@
+[Unit]
+Description=J.A.R.V.I.S AI Desktop Assistant
+Documentation=https://github.com/jarvis-assistant
+After=graphical-session.target pulseaudio.service
+Wants=pulseaudio.service
+
+[Service]
+Type=simple
+# These will be replaced by install_service.sh
+ExecStart=/usr/bin/python3 __PROJECT_DIR__/services/jarvis_service.py
+WorkingDirectory=__PROJECT_DIR__
+Environment=DISPLAY=:0
+Environment=XDG_RUNTIME_DIR=/run/user/__UID__
+Environment=PULSE_SERVER=unix:/run/user/__UID__/pulse/native
+Environment=DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/__UID__/bus
+Restart=on-failure
+RestartSec=10
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=default.target

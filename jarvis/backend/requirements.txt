@@ -1,0 +1,40 @@
+# ============================================================
+# J.A.R.V.I.S — Backend Dependencies
+# ============================================================
+
+# Web Framework
+fastapi==0.115.6
+uvicorn[standard]==0.34.0
+python-multipart==0.0.18
+
+# Database
+sqlalchemy==2.0.36
+aiosqlite==0.20.0
+
+# Security
+python-jose[cryptography]==3.3.0
+passlib[bcrypt]==1.7.4
+cryptography==44.0.0
+
+# Utilities
+pyyaml==6.0.2
+psutil==6.1.1
+pydantic==2.10.4
+python-dateutil==2.9.0
+qrcode[pil]==8.0
+
+# Voice Engine
+faster-whisper==1.1.0
+openwakeword==0.6.0
+piper-tts==1.2.0
+pyaudio==0.2.14
+sounddevice==0.5.1
+numpy==1.26.4
+webrtcvad==2.0.10
+
+# WebSocket
+websockets==14.1
+
+# HTTP
+httpx==0.28.1
+aiofiles==24.1.0

@@ -1,0 +1,38 @@
+@import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Exo+2:wght@400;500;600;700&family=Orbitron:wght@400;500;600;700&display=swap');
+
+:root {
+  --bg-primary: #050810;
+  --neon-cyan: #00d4ff;
+  --neon-blue: #0066ff;
+  --neon-green: #00ff88;
+  --neon-red: #ff3366;
+  --neon-orange: #ff8800;
+  --text-primary: #e0f7ff;
+  --text-secondary: rgba(224, 247, 255, 0.6);
+  --text-muted: rgba(224, 247, 255, 0.3);
+  --font-heading: 'Orbitron', sans-serif;
+  --font-body: 'Exo 2', sans-serif;
+  --font-data: 'Rajdhani', sans-serif;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: var(--font-body);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  min-height: 100vh;
+  min-height: 100dvh;
+  -webkit-font-smoothing: antialiased;
+  overscroll-behavior: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.glass-panel {
+  background: rgba(0, 212, 255, 0.04);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(0, 212, 255, 0.15);
+  border-radius: 16px;
+}

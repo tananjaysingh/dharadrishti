@@ -1,0 +1,59 @@
+# ============================================================
+# J.A.R.V.I.S — Custom Command Definitions
+# ============================================================
+# Define custom commands and app aliases here.
+
+app_aliases:
+  spotify: "spotify"
+  chrome: "google-chrome"
+  firefox: "firefox"
+  terminal: "gnome-terminal"
+  files: "nautilus"
+  calculator: "gnome-calculator"
+  settings: "gnome-control-center"
+  text editor: "gedit"
+  code: "code"
+  vscode: "code"
+  discord: "discord"
+  slack: "slack"
+  telegram: "telegram-desktop"
+  vlc: "vlc"
+  gimp: "gimp"
+  libreoffice: "libreoffice"
+  steam: "steam"
+
+website_shortcuts:
+  youtube: "https://www.youtube.com"
+  google: "https://www.google.com"
+  github: "https://github.com"
+  gmail: "https://mail.google.com"
+  twitter: "https://twitter.com"
+  reddit: "https://www.reddit.com"
+  netflix: "https://www.netflix.com"
+  stackoverflow: "https://stackoverflow.com"
+  chatgpt: "https://chat.openai.com"
+  claude: "https://claude.ai"
+
+custom_routines:
+  good_morning:
+    - action: "greeting"
+      params: { message: "Good morning, sir. Systems are online." }
+    - action: "system_stats"
+    - action: "open_app"
+      params: { app: "firefox" }
+
+  focus_mode:
+    - action: "close_app"
+      params: { app: "discord" }
+    - action: "close_app"
+      params: { app: "slack" }
+    - action: "close_app"
+      params: { app: "telegram-desktop" }
+    - action: "set_volume"
+      params: { level: 20 }
+
+  gaming_mode:
+    - action: "close_app"
+      params: { app: "discord" }
+    - action: "set_brightness"
+      params: { level: 100 }

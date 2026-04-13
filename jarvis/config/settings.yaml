@@ -1,0 +1,73 @@
+# ============================================================
+# J.A.R.V.I.S — Configuration
+# ============================================================
+
+assistant:
+  name: "Jarvis"
+  wake_word: "jarvis"
+  greeting: "At your service"
+  language: "en"
+
+# ── Background Service ──
+service:
+  mode: "background"          # background | cli | web
+  auto_start: true
+  tray_enabled: true
+  notification_feedback: true # Desktop notification for every response
+  chime_on_wake: true
+
+server:
+  host: "0.0.0.0"
+  port: 8400
+  ws_path: "/ws"
+  cors_origins:
+    - "http://localhost:5173"
+    - "http://localhost:5174"
+
+voice:
+  stt_model: "small"           # Faster-Whisper model size: tiny, base, small, medium
+  stt_device: "cpu"            # cpu or cuda
+  tts_model: "en_US-lessac-medium"
+  tts_speaker: 0
+  tts_speed: 1.0
+  wake_word_threshold: 0.5
+  vad_threshold: 0.5
+  silence_duration: 1.5        # Seconds of silence before stopping recording
+  max_recording: 15            # Max recording duration in seconds
+  activation_sound: true
+
+desktop:
+  default_browser: "firefox"
+  default_terminal: "gnome-terminal"
+  screenshot_dir: "~/Pictures/Screenshots"
+  file_search_max_results: 50
+  dangerous_commands_confirm: true
+
+# ── Notes ──
+notes:
+  directory: "~/Documents/JarvisNotes"
+
+# ── Reminders ──
+reminders:
+  check_interval: 30           # Seconds between reminder checks
+
+security:
+  jwt_secret: "change-me-in-production"
+  jwt_expiry_hours: 24
+  pairing_code_length: 6
+  max_failed_attempts: 5
+
+database:
+  path: "database/jarvis.db"
+
+ai:
+  enabled: false
+  provider: "ollama"           # ollama, openai, claude
+  ollama_model: "llama3.2:3b"
+  ollama_url: "http://localhost:11434"
+  openai_api_key: ""
+  claude_api_key: ""
+
+logging:
+  level: "INFO"
+  file: "logs/jarvis.log"
