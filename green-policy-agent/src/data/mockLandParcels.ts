@@ -15,11 +15,14 @@ export const villagesCoordinates = [
 
 let allParcels: GeneratedParcel[] = [];
 
-// Generate ~20 parcels for each village, with 1-2 intended conflicts
+// Generate organic 4 to 8 parcels for each village, with global control on intentional conflicts
+let totalConflictsGenerated = 0;
 for (const village of villagesCoordinates) {
-  const count = 25; // 5x5 grid roughly
-  const conflicts = Math.floor(Math.random() * 2) + 1; // 1 or 2 conflicts per village
-  const cluster = generateParcelCluster(village.lat, village.lng, village.name, count, village.code, conflicts);
+  // We only want 2 to 4 conflicts ACROSS the entire map realistically!
+  const hasConflict = totalConflictsGenerated < 3 && Math.random() > 0.5 ? 1 : 0;
+  if (hasConflict) totalConflictsGenerated++;
+  
+  const cluster = generateParcelCluster(village.lat, village.lng, village.name, village.code, hasConflict);
   allParcels = [...allParcels, ...cluster];
 }
 

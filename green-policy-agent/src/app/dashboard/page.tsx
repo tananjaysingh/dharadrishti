@@ -92,7 +92,7 @@ export default function Dashboard() {
 
         {/* Center - Map */}
         <main className="flex-1 relative p-4 pl-0 md:pl-4">
-          <MapViewer onSelectParcel={setSelectedParcel} />
+          <MapViewer onSelectParcel={setSelectedParcel} selectedParcelId={selectedParcel} />
         </main>
 
         {/* Right Sidebar - Details & AI Panel (conditionally rendered) */}
