@@ -1,0 +1,258 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@layer base {
+  :root {
+    /* DharaDrishti Government Color Palette */
+    --saffron: #FF9933;
+    --saffron-dark: #E68A2E;
+    --saffron-light: #FFAD5C;
+    --india-green: #138808;
+    --india-green-dark: #0E6B06;
+    --india-green-light: #1AAF0A;
+    --navy-blue: #000080;
+    --navy-dark: #000066;
+    --navy-light: #1A1A99;
+    --ashoka-blue: #06038D;
+
+    /* Semantic tokens - Light mode (Government style) */
+    --background: 0 0% 98%;
+    --foreground: 222 47% 11%;
+    --card: 0 0% 100%;
+    --card-foreground: 222 47% 11%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 47% 11%;
+    --primary: 145 85% 28%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 220 14% 96%;
+    --secondary-foreground: 222 47% 11%;
+    --muted: 220 14% 96%;
+    --muted-foreground: 220 9% 46%;
+    --accent: 32 100% 50%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 84% 60%;
+    --border: 220 13% 91%;
+    --input: 220 13% 91%;
+    --ring: 145 85% 28%;
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    --background: 222 47% 8%;
+    --foreground: 0 0% 95%;
+    --card: 222 47% 11%;
+    --card-foreground: 0 0% 95%;
+    --popover: 222 47% 11%;
+    --popover-foreground: 0 0% 95%;
+    --primary: 145 85% 35%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 222 30% 18%;
+    --secondary-foreground: 0 0% 95%;
+    --muted: 222 30% 18%;
+    --muted-foreground: 220 9% 60%;
+    --accent: 32 100% 50%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 84% 60%;
+    --border: 222 30% 20%;
+    --input: 222 30% 20%;
+    --ring: 145 85% 35%;
+  }
+
+  * {
+    border-color: hsl(var(--border));
+    outline-color: hsl(var(--ring) / 0.5);
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: 'Inter', sans-serif;
+  }
+}
+
+@layer components {
+  /* Government-style top stripe with tricolor */
+  .govt-stripe {
+    background: linear-gradient(
+      to right,
+      var(--saffron) 0%, var(--saffron) 33.33%,
+      #FFFFFF 33.33%, #FFFFFF 66.66%,
+      var(--india-green) 66.66%, var(--india-green) 100%
+    );
+    height: 4px;
+  }
+
+  /* Glass panel effect */
+  .glass-panel {
+    @apply bg-white/80 backdrop-blur-xl border border-gray-200/60 shadow-lg;
+  }
+  .dark .glass-panel {
+    @apply bg-gray-900/60 backdrop-blur-xl border-gray-700/40 shadow-2xl;
+  }
+
+  /* Gradient text in tricolor */
+  .gradient-text {
+    @apply bg-clip-text text-transparent;
+    background-image: linear-gradient(135deg, var(--saffron), var(--india-green));
+  }
+
+  .gradient-text-green {
+    @apply bg-clip-text text-transparent;
+    background-image: linear-gradient(135deg, #138808, #1AAF0A);
+  }
+
+  /* Government card style */
+  .govt-card {
+    @apply bg-white rounded-xl border border-gray-100 shadow-md hover:shadow-xl transition-all duration-300;
+    position: relative;
+    overflow: hidden;
+  }
+  .govt-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--saffron), var(--india-green));
+  }
+  .dark .govt-card {
+    @apply bg-gray-900/80 border-gray-700/40;
+  }
+
+  /* Hindi text styling */
+  .hindi-text {
+    font-family: 'Noto Sans Devanagari', sans-serif;
+  }
+
+  /* Government-style section divider */
+  .section-divider {
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--saffron), var(--india-green), transparent);
+  }
+
+  /* Stat card with animated number */
+  .stat-card {
+    @apply bg-white/90 backdrop-blur-sm rounded-xl p-6 text-center border border-gray-100 shadow-md;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  .stat-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 40px -12px rgba(19, 136, 8, 0.2);
+  }
+  .dark .stat-card {
+    @apply bg-gray-800/80 border-gray-700/50;
+  }
+
+  /* Badge styles */
+  .govt-badge {
+    @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold;
+  }
+  .badge-safe {
+    @apply bg-green-100 text-green-800;
+  }
+  .badge-risk {
+    @apply bg-red-100 text-red-800;
+  }
+  .badge-disputed {
+    @apply bg-yellow-100 text-yellow-800;
+  }
+
+  /* Interactive map preview zones */
+  .zone-safe { background-color: rgba(19, 136, 8, 0.15); border: 2px solid #138808; }
+  .zone-risk { background-color: rgba(220, 38, 38, 0.15); border: 2px solid #dc2626; }
+  .zone-disputed { background-color: rgba(234, 179, 8, 0.15); border: 2px solid #eab308; }
+
+  /* Button - Government Primary */
+  .btn-govt-primary {
+    @apply inline-flex items-center justify-center px-6 py-3 font-semibold text-white rounded-lg transition-all duration-200;
+    background: linear-gradient(135deg, #138808, #0E6B06);
+    box-shadow: 0 4px 14px -3px rgba(19, 136, 8, 0.4);
+  }
+  .btn-govt-primary:hover {
+    background: linear-gradient(135deg, #1AAF0A, #138808);
+    box-shadow: 0 6px 20px -3px rgba(19, 136, 8, 0.5);
+    transform: translateY(-1px);
+  }
+
+  .btn-govt-saffron {
+    @apply inline-flex items-center justify-center px-6 py-3 font-semibold text-white rounded-lg transition-all duration-200;
+    background: linear-gradient(135deg, var(--saffron), var(--saffron-dark));
+    box-shadow: 0 4px 14px -3px rgba(255, 153, 51, 0.4);
+  }
+  .btn-govt-saffron:hover {
+    background: linear-gradient(135deg, var(--saffron-light), var(--saffron));
+    box-shadow: 0 6px 20px -3px rgba(255, 153, 51, 0.5);
+    transform: translateY(-1px);
+  }
+
+  /* Notification/Alert card */
+  .alert-card {
+    @apply rounded-lg border p-4 flex items-start gap-3 transition-all duration-200;
+  }
+  .alert-card:hover {
+    @apply shadow-md;
+  }
+
+  /* Scrollbar styling */
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+  ::-webkit-scrollbar-track {
+    @apply bg-gray-100;
+  }
+  ::-webkit-scrollbar-thumb {
+    @apply bg-gray-300 rounded-full;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-gray-400;
+  }
+  .dark ::-webkit-scrollbar-track {
+    @apply bg-gray-800;
+  }
+  .dark ::-webkit-scrollbar-thumb {
+    @apply bg-gray-600;
+  }
+}
+
+@layer utilities {
+  /* Smooth fade-in animation */
+  .animate-fade-in {
+    animation: fadeIn 0.6s ease-out forwards;
+  }
+  .animate-fade-in-up {
+    animation: fadeInUp 0.6s ease-out forwards;
+  }
+  .animate-slide-in-left {
+    animation: slideInLeft 0.6s ease-out forwards;
+  }
+  .animate-slide-in-right {
+    animation: slideInRight 0.6s ease-out forwards;
+  }
+  .animate-counter {
+    animation: counterPulse 2s ease-out;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes slideInLeft {
+    from { opacity: 0; transform: translateX(-30px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+  @keyframes slideInRight {
+    from { opacity: 0; transform: translateX(30px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+  @keyframes counterPulse {
+    0% { transform: scale(0.8); opacity: 0; }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); opacity: 1; }
+  }
+}

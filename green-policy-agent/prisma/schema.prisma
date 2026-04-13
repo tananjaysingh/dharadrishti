@@ -1,0 +1,88 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String?
+  password  String?
+  role      String   @default("USER") // Farmer, NGO, Lawyer, Journalist, Admin
+  createdAt DateTime @default(now())
+}
+
+model LandParcel {
+  id                     String   @id @default(cuid())
+  surveyNumber           String   @unique
+  village                String
+  tehsil                 String
+  district               String
+  state                  String
+  ownerName              String
+  landType               String
+  ownershipType          String
+  areaInAcres            Float
+  // We use GeoJSON representation for boundaries here to avoid heavy PostGIS raw extension handling locally.
+  polygonCoordinates     Json
+  environmentalRiskScore Int
+  acquisitionRiskScore   Int
+  forestRightsApplicable Boolean
+  protectedZone          Boolean
+  aiSummary              String   @db.Text
+  createdAt              DateTime @default(now())
+  updatedAt              DateTime @updatedAt
+
+  projects   Project[]
+  courtCases CourtCase[]
+  notifications Notification[]
+  environmentalClearances EnvironmentalClearance[]
+}
+
+model Project {
+  id           String      @id @default(cuid())
+  name         String
+  type         String
+  description  String
+  status       String
+  landParcelId String?
+  LandParcel   LandParcel? @relation(fields: [landParcelId], references: [id])
+  createdAt    DateTime    @default(now())
+}
+
+model CourtCase {
+  id           String      @id @default(cuid())
+  caseNumber   String
+  status       String
+  description  String
+  court        String
+  landParcelId String?
+  LandParcel   LandParcel? @relation(fields: [landParcelId], references: [id])
+  createdAt    DateTime    @default(now())
+}
+
+model EnvironmentalClearance {
+  id           String      @id @default(cuid())
+  certificateNumber String
+  status       String
+  issuedDate   DateTime
+  landParcelId String?
+  LandParcel   LandParcel? @relation(fields: [landParcelId], references: [id])
+  createdAt    DateTime    @default(now())
+}
+
+model Notification {
+  id           String      @id @default(cuid())
+  title        String
+  message      String
+  type         String
+  landParcelId String?
+  LandParcel   LandParcel? @relation(fields: [landParcelId], references: [id])
+  createdAt    DateTime    @default(now())
+}
+

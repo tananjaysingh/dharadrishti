@@ -1,0 +1,2469 @@
+import { PrismaClient } from '@prisma/client';
+
+const prisma = new PrismaClient();
+
+const mockParcels = [
+  {
+    "id": "par_sutbwunlj",
+    "surveyNumber": "RAJ-JP-1001",
+    "village": "Phulera",
+    "tehsil": "Jaipur",
+    "district": "Jaipur",
+    "state": "Rajasthan",
+    "ownerName": "State Gov",
+    "landType": "Forest",
+    "ownershipType": "Government",
+    "areaInAcres": 22.99,
+    "polygonCoordinates": [
+      [
+        75.80346546287208,
+        26.921089268044188
+      ],
+      [
+        75.81085876222303,
+        26.921089268044188
+      ],
+      [
+        75.81085876222303,
+        26.92848256739514
+      ],
+      [
+        75.80346546287208,
+        26.92848256739514
+      ],
+      [
+        75.80346546287208,
+        26.921089268044188
+      ]
+    ],
+    "environmentalRiskScore": 77,
+    "acquisitionRiskScore": 90,
+    "forestRightsApplicable": true,
+    "protectedZone": true,
+    "aiSummary": "This parcel overlaps with a protected forest boundary and may require environmental clearance before acquisition.",
+    "createdAt": "2026-04-12T01:05:07.116Z",
+    "updatedAt": "2026-04-12T01:05:07.116Z"
+  },
+  {
+    "id": "par_wnzjeggap",
+    "surveyNumber": "RAJ-JP-1002",
+    "village": "Chomu",
+    "tehsil": "Jaipur",
+    "district": "Jaipur",
+    "state": "Rajasthan",
+    "ownerName": "State Gov",
+    "landType": "Forest",
+    "ownershipType": "Panchayat",
+    "areaInAcres": 12.11,
+    "polygonCoordinates": [
+      [
+        75.79945196637281,
+        26.908197500908027
+      ],
+      [
+        75.80803606720924,
+        26.908197500908027
+      ],
+      [
+        75.80803606720924,
+        26.916781601744454
+      ],
+      [
+        75.79945196637281,
+        26.916781601744454
+      ],
+      [
+        75.79945196637281,
+        26.908197500908027
+      ]
+    ],
+    "environmentalRiskScore": 99,
+    "acquisitionRiskScore": 88,
+    "forestRightsApplicable": true,
+    "protectedZone": true,
+    "aiSummary": "This parcel overlaps with a protected forest boundary and may require environmental clearance before acquisition.",
+    "createdAt": "2026-04-12T01:05:07.116Z",
+    "updatedAt": "2026-04-12T01:05:07.116Z"
+  },
+  {
+    "id": "par_jzw11qhz9",
+    "surveyNumber": "RAJ-JP-1003",
+    "village": "Jamwa Ramgarh",
+    "tehsil": "Jaipur",
+    "district": "Jaipur",
+    "state": "Rajasthan",
+    "ownerName": "State Gov",
+    "landType": "Forest",
+    "ownershipType": "Panchayat",
+    "areaInAcres": 39.24,
+    "polygonCoordinates": [
+      [
+        75.78004106228265,
+        26.914405297908853
+      ],
+      [
+        75.79376183480531,
+        26.914405297908853
+      ],
+      [
+        75.79376183480531,
+        26.928126070431517
+      ],
+      [
+        75.78004106228265,
+        26.928126070431517
+      ],
+      [
+        75.78004106228265,
+        26.914405297908853
+      ]
+    ],
+    "environmentalRiskScore": 70,
+    "acquisitionRiskScore": 81,
+    "forestRightsApplicable": true,
+    "protectedZone": true,
+    "aiSummary": "This parcel overlaps with a protected forest boundary and may require environmental clearance before acquisition.",
+    "createdAt": "2026-04-12T01:05:07.116Z",
+    "updatedAt": "2026-04-12T01:05:07.116Z"
+  },
+  {
+    "id": "par_bpu1ky3fj",
+    "surveyNumber": "RAJ-JP-1004",
+    "village": "Amer",
+    "tehsil": "Jaipur",
+    "district": "Jaipur",
+    "state": "Rajasthan",
+    "ownerName": "State Gov",
+    "landType": "Forest",
+    "ownershipType": "Panchayat",
+    "areaInAcres": 26.24,
+    "polygonCoordinates": [
+      [
+        75.75288320507687,
+        26.897557693112503
+      ],
+      [
+        75.76739637049877,
+        26.897557693112503
+      ],
+      [
+        75.76739637049877,
+        26.91207085853441
+      ],
+      [
+        75.75288320507687,
+        26.91207085853441
+      ],
+      [
+        75.75288320507687,
+        26.897557693112503
+      ]
+    ],
+    "environmentalRiskScore": 78,
+    "acquisitionRiskScore": 85,
+    "forestRightsApplicable": true,
+    "protectedZone": true,
+    "aiSummary": "This parcel overlaps with a protected forest boundary and may require environmental clearance before acquisition.",
+    "createdAt": "2026-04-12T01:05:07.116Z",
+    "updatedAt": "2026-04-12T01:05:07.116Z"
+  },
+  {
+    "id": "par_l2cx427mf",
+    "surveyNumber": "RAJ-JP-1005",
+    "village": "Bassi",
+    "tehsil": "Jaipur",
+    "district": "Jaipur",
+    "state": "Rajasthan",
+    "ownerName": "State Gov",
+    "landType": "Forest",
+    "ownershipType": "Government",
+    "areaInAcres": 34.04,
+    "polygonCoordinates": [
+      [
+        75.76896147267853,
+        26.879727936991298
+      ],
+      [
+        75.78143474089875,
+        26.879727936991298
+      ],
+      [
+        75.78143474089875,
+        26.892201205211524
+      ],
+      [
+        75.76896147267853,
+        26.892201205211524
+      ],
+      [
+        75.76896147267853,
+        26.879727936991298
+      ]
+    ],
+    "environmentalRiskScore": 90,
+    "acquisitionRiskScore": 85,
+    "forestRightsApplicable": true,
+    "protectedZone": true,
+    "aiSummary": "This parcel overlaps with a protected forest boundary and may require environmental clearance before acquisition.",
+    "createdAt": "2026-04-12T01:05:07.116Z",
+    "updatedAt": "2026-04-12T01:05:07.116Z"
+  },
+  {
+    "id": "par_8nh78tyfh",
+    "surveyNumber": "RAJ-JP-1006",
+    "village": "Kotputli",
+    "tehsil": "Jaipur",
+    "district": "Jaipur",
+    "state": "Rajasthan",
+    "ownerName": "State Gov",
+    "landType": "Forest",
+    "ownershipType": "Government",
+    "areaInAcres": 19.16,
+    "polygonCoordinates": [
+      [
+        75.74598374668312,
+        26.88224342561487
+      ],
+      [
+        75.75254127686256,
+        26.88224342561487
+      ],
+      [
+        75.75254127686256,
+        26.888800955794306
+      ],
+      [
+        75.74598374668312,
+        26.888800955794306
+      ],
+      [
+        75.74598374668312,
+        26.88224342561487
+      ]
+    ],
+    "environmentalRiskScore": 98,
+    "acquisitionRiskScore": 100,
+    "forestRightsApplicable": true,
+    "protectedZone": true,
+    "aiSummary": "This parcel overlaps with a protected forest boundary and may require environmental clearance before acquisition.",
+    "createdAt": "2026-04-12T01:05:07.116Z",
+    "updatedAt": "2026-04-12T01:05:07.116Z"
+  },
+  {
+    "id": "par_j1wt0ycw5",
+    "surveyNumber": "RAJ-JP-1007",
+    "village": "Shahpura",
+    "tehsil": "Jaipur",
+    "district": "Jaipur",
+    "state": "Rajasthan",
+    "ownerName": "State Gov",
+    "landType": "Forest",
+    "ownershipType": "Panchayat",
+    "areaInAcres": 13.63,
+    "polygonCoordinates": [
+      [
+        75.82512514409437,
+        26.93123657712454
+      ],
+      [
+        75.83628028902751,
+        26.93123657712454
+      ],
+      [
+        75.83628028902751,
+        26.942391722057682
+      ],
+      [
+        75.82512514409437,
+        26.942391722057682
+      ],
+      [
+        75.82512514409437,
+        26.93123657712454
+      ]
+    ],
+    "environmentalRiskScore": 74,
+    "acquisitionRiskScore": 96,
+    "forestRightsApplicable": true,
+    "protectedZone": true,
+    "aiSummary": "This parcel overlaps with a protected forest boundary and may require environmental clearance before acquisition.",
+    "createdAt": "2026-04-12T01:05:07.116Z",
+    "updatedAt": "2026-04-12T01:05:07.116Z"
+  },
+  {
+    "id": "par_xn3jl3dj2",
+    "surveyNumber": "RAJ-JP-1008",
+    "village": "Kotputli",
+    "tehsil": "Jaipur",
+    "district": "Jaipur",
+    "state": "Rajasthan",
+    "ownerName": "State Gov",
+    "landType": "Forest",
+    "ownershipType": "Panchayat",
+    "areaInAcres": 18.47,
+    "polygonCoordinates": [
+      [
+        75.74613493680478,
+        26.90957211304268
+      ],
+      [
+        75.76102885195081,
+        26.90957211304268
+      ],
+      [
+        75.76102885195081,
+        26.92446602818871
+      ],
+      [
+        75.74613493680478,
+        26.92446602818871
+      ],
+      [
+        75.74613493680478,
+        26.90957211304268
+      ]
+    ],
+    "environmentalRiskScore": 85,
+    "acquisitionRiskScore": 97,
+    "forestRightsApplicable": true,
+    "protectedZone": true,
+    "aiSummary": "This parcel overlaps with a protected forest boundary and may require environmental clearance before acquisition.",
+    "createdAt": "2026-04-12T01:05:07.116Z",
+    "updatedAt": "2026-04-12T01:05:07.116Z"
+  },
+  {
+    "id": "par_dncj1nxcc",
+    "surveyNumber": "RAJ-JP-1009",
+    "village": "Jobner",
+    "tehsil": "Jaipur",
+    "district": "Jaipur",
+    "state": "Rajasthan",
+    "ownerName": "State Gov",
+    "landType": "Forest",
+    "ownershipType": "Panchayat",
+    "areaInAcres": 10.77,
+    "polygonCoordinates": [
+      [
+        75.76083938850942,
+        26.866061356845773
+      ],
+      [
+        75.77343799720256,
+        26.866061356845773
+      ],
+      [
+        75.77343799720256,
+        26.878659965538912
+      ],
+      [
+        75.76083938850942,
+        26.878659965538912
+      ],
+      [
+        75.76083938850942,
+        26.866061356845773
+      ]
+    ],
+    "environmentalRiskScore": 78,
+    "acquisitionRiskScore": 90,
+    "forestRightsApplicable": true,
+    "protectedZone": true,
+    "aiSummary": "This parcel overlaps with a protected forest boundary and may require environmental clearance before acquisition.",
+    "createdAt": "2026-04-12T01:05:07.116Z",
+    "updatedAt": "2026-04-12T01:05:07.116Z"
+  },
+  {
+    "id": "par_k69m6ke9q",
+    "surveyNumber": "RAJ-JP-1010",
+    "village": "Jobner",
+    "tehsil": "Jaipur",
+    "district": "Jaipur",
+    "state": "Rajasthan",
+    "ownerName": "State Gov",
+    "landType": "Forest",
+    "ownershipType": "Government",
+    "areaInAcres": 44.21,
+    "polygonCoordinates": [
+      [
+        75.78240887067646,
+        26.960786376078616
+      ],
+      [
+        75.79532719068627,
+        26.960786376078616
+      ],
+      [
+        75.79532719068627,
+        26.973704696088415
+      ],
+      [
+        75.78240887067646,
+        26.973704696088415
+      ],
+      [
+        75.78240887067646,
+        26.960786376078616
+      ]
+    ],
+    "environmentalRiskScore": 74,
+    "acquisitionRiskScore": 85,
+    "forestRightsApplicable": true,
+    "protectedZone": true,
+    "aiSummary": "This parcel overlaps with a protected forest boundary and may require environmental clearance before acquisition.",
+    "createdAt": "2026-04-12T01:05:07.116Z",
+    "updatedAt": "2026-04-12T01:05:07.116Z"
+  },
+  {
+    "id": "par_cb7haf99c",
+    "surveyNumber": "RAJ-JP-1011",
+    "village": "Phulera",
+    "tehsil": "Jaipur",
+    "district": "Jaipur",
+    "state": "Rajasthan",
+    "ownerName": "Ramesh Sharma",
+    "landType": "Private",
+    "ownershipType": "Farmer",
+    "areaInAcres": 31.45,
+    "polygonCoordinates": [
+      [
+        75.78894045137051,
+        26.871468257792746
+      ],
+      [
+        75.80222349699329,
+        26.871468257792746
+      ],
+      [
+        75.80222349699329,
+        26.884751303415527
+      ],
+      [
+        75.78894045137051,
+        26.884751303415527
+      ],
+      [
+        75.78894045137051,
+        26.871468257792746
+      ]
+    ],
+    "environmentalRiskScore": 10,
+    "acquisitionRiskScore": 96,
+    "forestRightsApplicable": false,
+    "protectedZone": false,
+    "aiSummary": "There is currently an active legal dispute on this parcel. Proceed with caution.",
+    "createdAt": "2026-04-12T01:05:07.116Z",
+    "updatedAt": "2026-04-12T01:05:07.116Z"
+  },
+  {
+    "id": "par_l9o6q8ptx",
+    "surveyNumber": "RAJ-JP-1012",
+    "village": "Chomu",
+    "tehsil": "Jaipur",
+    "district": "Jaipur",
+    "state": "Rajasthan",
+    "ownerName": "Sunita Yadav",
+    "landType": "Private",
+    "ownershipType": "Farmer",
+    "areaInAcres": 34.37,
+    "polygonCoordinates": [
+      [
+        75.79936054445687,
+        26.95934451376039
+      ],
+      [
+        75.81027330011798,
+        26.95934451376039
+      ],
+      [
+        75.81027330011798,
+        26.970257269421502
+      ],
+      [
+        75.79936054445687,
+        26.970257269421502
+      ],
+      [
+        75.79936054445687,
+        26.95934451376039
+      ]
+    ],
+    "environmentalRiskScore": 35,
+    "acquisitionRiskScore": 20,
+    "forestRightsApplicable": false,
+    "protectedZone": false,
+    "aiSummary": "This land is privately owned and has no active disputes or protected status.",
+    "createdAt": "2026-04-12T01:05:07.116Z",
+    "updatedAt": "2026-04-12T01:05:07.116Z"
+  },
+  {
+    "id": "par_omoc74tzd",
+    "surveyNumber": "RAJ-JP-1013",
+    "village": "Chomu",
+    "tehsil": "Jaipur",
+    "district": "Jaipur",
+    "state": "Rajasthan",
+    "ownerName": "Pooja Verma",
+    "landType": "Private",
+    "ownershipType": "Farmer",
+    "areaInAcres": 27.56,
+    "polygonCoordinates": [
+      [
+        75.79322342282445,
+        26.918176722122197
+      ],
+      [
+        75.80643970951589,
+        26.918176722122197
+      ],
+      [
+        75.80643970951589,
+        26.93139300881363
+      ],
+      [
+        75.79322342282445,
+        26.93139300881363
+      ],
+      [
+        75.79322342282445,
+        26.918176722122197
+      ]
+    ],
+    "environmentalRiskScore": 16,
+    "acquisitionRiskScore": 14,
+    "forestRightsApplicable": false,
+    "protectedZone": false,
+    "aiSummary": "This land is privately owned and has no active disputes or protected status.",
+    "createdAt": "2026-04-12T01:05:07.116Z",
+    "updatedAt": "2026-04-12T01:05:07.116Z"
+  },
+  {
+    "id": "par_ohi0h49tt",
+    "surveyNumber": "RAJ-JP-1014",
+    "village": "Shahpura",
+    "tehsil": "Jaipur",
+    "district": "Jaipur",
+    "state": "Rajasthan",
+    "ownerName": "Mahendra Singh",
+    "landType": "Private",
+    "ownershipType": "Farmer",
+    "areaInAcres": 2.51,
+    "polygonCoordinates": [
+      [
+        75.75604786657667,
+        26.87543253936457
+      ],
+      [
+        75.76436495369371,
+        26.87543253936457
+      ],
+      [
+        75.76436495369371,
+        26.883749626481624
+      ],
+      [
+        75.75604786657667,
+        26.883749626481624
+      ],
+      [
+        75.75604786657667,
+        26.87543253936457
+      ]
+    ],
+    "environmentalRiskScore": 36,
+    "acquisitionRiskScore": 44,
+    "forestRightsApplicable": false,
+    "protectedZone": false,
+    "aiSummary": "This land is privately owned and has no active disputes or protected status.",
+    "createdAt": "2026-04-12T01:05:07.116Z",
+    "updatedAt": "2026-04-12T01:05:07.116Z"
+  },
+  {
+    "id": "par_zeynv0yuq",
+    "surveyNumber": "RAJ-JP-1015",
+    "village": "Chomu",
+    "tehsil": "Jaipur",
+    "district": "Jaipur",
+    "state": "Rajasthan",
+    "ownerName": "Sunita Yadav",
+    "landType": "Private",
+    "ownershipType": "Farmer",
+    "areaInAcres": 28.85,
+    "polygonCoordinates": [
+      [
+        75.74399294012251,
+        26.87374660149609
+      ],
+      [
+        75.75453826243016,
+        26.87374660149609
+      ],
+      [
+        75.75453826243016,
+        26.884291923803744
+      ],
+      [
+        75.74399294012251,
+        26.884291923803744
+      ],
+      [
+        75.74399294012251,
+        26.87374660149609
+      ]
+    ],
+    "environmentalRiskScore": 97,
+    "acquisitionRiskScore": 91,
+    "forestRightsApplicable": false,
+    "protectedZone": true,
+    "aiSummary": "This parcel overlaps with a protected forest boundary and may require environmental clearance before acquisition.",
+    "createdAt": "2026-04-12T01:05:07.116Z",
+    "updatedAt": "2026-04-12T01:05:07.116Z"
+  },
+  {
+    "id": "par_ncgmg45q5",
+    "surveyNumber": "RAJ-JP-1016",
+    "village": "Jamwa Ramgarh",
+    "tehsil": "Jaipur",
+    "district": "Jaipur",
+    "state": "Rajasthan",
+    "ownerName": "Pooja Verma",
+    "landType": "Private",
+    "ownershipType": "Farmer",
+    "areaInAcres": 2.34,
+    "polygonCoordinates": [
+      [
+        75.8343036555227,
+        26.921306152282227
+      ],
+      [
+        75.8464008578906,
+        26.921306152282227
+      ],
+      [
+        75.8464008578906,
+        26.93340335465012
+      ],
+      [
+        75.8343036555227,
+        26.93340335465012
+      ],
+      [
+        75.8343036555227,
+        26.921306152282227
+      ]
+    ],
+    "environmentalRiskScore": 12,
+    "acquisitionRiskScore": 39,
+    "forestRightsApplicable": false,
+    "protectedZone": false,
+    "aiSummary": "This land is privately owned and has no active disputes or protected status.",
+    "createdAt": "2026-04-12T01:05:07.116Z",
+    "updatedAt": "2026-04-12T01:05:07.116Z"
+  },
+  {
+    "id": "par_4cqr9f3bi",
+    "surveyNumber": "RAJ-JP-1017",
+    "village": "Shahpura",
+    "tehsil": "Jaipur",
+    "district": "Jaipur",
+    "state": "Rajasthan",
+    "ownerName": "Anjali Gupta",
+    "landType": "Private",
+    "ownershipType": "Farmer",
+    "areaInAcres": 25.8,
+    "polygonCoordinates": [
+      [
+        75.82166427827303,
+        26.881798054059832
+      ],
+      [
+        75.83470024344332,
+        26.881798054059832
+      ],
+      [
+        75.83470024344332,
+        26.89483401923012
+      ],
+      [
+        75.82166427827303,
+        26.89483401923012
+      ],
+      [
+        75.82166427827303,
+        26.881798054059832
+      ]
+    ],
+    "environmentalRiskScore": 6,
+    "acquisitionRiskScore": 38,
+    "forestRightsApplicable": false,
+    "protectedZone": false,
+    "aiSummary": "This land is privately owned and has no active disputes or protected status.",
+    "createdAt": "2026-04-12T01:05:07.116Z",
+    "updatedAt": "2026-04-12T01:05:07.116Z"
+  },
+  {
+    "id": "par_9a53g8033",
+    "surveyNumber": "RAJ-JP-1018",
+    "village": "Jobner",
+    "tehsil": "Jaipur",
+    "district": "Jaipur",
+    "state": "Rajasthan",
+    "ownerName": "Mahendra Singh",
+    "landType": "Private",
+    "ownershipType": "Farmer",
+    "areaInAcres": 40.32,
+    "polygonCoordinates": [
+      [
+        75.73774016417127,
+        26.905346936560097
+      ],
+      [
+        75.74354281160716,
+        26.905346936560097
+      ],
+      [
+        75.74354281160716,
+        26.91114958399598
+      ],
+      [
+        75.73774016417127,
+        26.91114958399598
+      ],
+      [
+        75.73774016417127,
+        26.905346936560097
+      ]
+    ],
+    "environmentalRiskScore": 33,
+    "acquisitionRiskScore": 83,
+    "forestRightsApplicable": false,
+    "protectedZone": false,
+    "aiSummary": "There is currently an active legal dispute on this parcel. Proceed with caution.",
+    "createdAt": "2026-04-12T01:05:07.116Z",
+    "updatedAt": "2026-04-12T01:05:07.116Z"
+  },
+  {
+    "id": "par_d9sdv5nxg",
+    "surveyNumber": "RAJ-JP-1019",
+    "village": "Sambhar",
+    "tehsil": "Jaipur",
+    "district": "Jaipur",
+    "state": "Rajasthan",
+    "ownerName": "Kamla Devi",
+    "landType": "Private",
+    "ownershipType": "Farmer",
+    "areaInAcres": 37.37,
+    "polygonCoordinates": [
+      [
+        75.78061673924569,
+        26.925285942150715
+      ],
+      [
+        75.79332242896724,
+        26.925285942150715
+      ],
+      [
+        75.79332242896724,
+        26.937991631872276
+      ],
+      [
+        75.78061673924569,
+        26.937991631872276
+      ],
+      [
+        75.78061673924569,
+        26.925285942150715
+      ]
+    ],
+    "environmentalRiskScore": 15,
+    "acquisitionRiskScore": 29,
+    "forestRightsApplicable": false,
+    "protectedZone": false,
+    "aiSummary": "This land is privately owned and has no active disputes or protected status.",
+    "createdAt": "2026-04-12T01:05:07.116Z",
+    "updatedAt": "2026-04-12T01:05:07.116Z"
+  },
+  {
+    "id": "par_iku8gaugu",
+    "surveyNumber": "RAJ-JP-1020",
+    "village": "Jamwa Ramgarh",
+    "tehsil": "Jaipur",
+    "district": "Jaipur",
+    "state": "Rajasthan",
+    "ownerName": "Mahendra Singh",
+    "landType": "Private",
+    "ownershipType": "Farmer",
+    "areaInAcres": 8.18,
+    "polygonCoordinates": [
+      [
+        75.80184272945445,
+        26.86885526280021
+      ],
+      [
+        75.81536056034643,
+        26.86885526280021
+      ],
+      [
+        75.81536056034643,
+        26.88237309369219
+      ],
+      [
+        75.80184272945445,
+        26.88237309369219
+      ],
+      [
+        75.80184272945445,
+        26.86885526280021
+      ]
+    ],
+    "environmentalRiskScore": 5,
+    "acquisitionRiskScore": 44,
+    "forestRightsApplicable": false,
+    "protectedZone": false,
+    "aiSummary": "This land is privately owned and has no active disputes or protected status.",
+    "createdAt": "2026-04-12T01:05:07.116Z",
+    "updatedAt": "2026-04-12T01:05:07.116Z"
+  },
+  {
+    "id": "par_f8tbbb6tj",
+    "surveyNumber": "RAJ-JP-1021",
+    "village": "Amer",
+    "tehsil": "Jaipur",
+    "district": "Jaipur",
+    "state": "Rajasthan",
+    "ownerName": "State Gov",
+    "landType": "Panchayat",
+    "ownershipType": "Panchayat",
+    "areaInAcres": 3.31,
+    "polygonCoordinates": [
+      [
+        75.76248291625792,
+        26.904239117692903
+      ],
+      [
+        75.76937466767305,
+        26.904239117692903
+      ],
+      [
+        75.76937466767305,
+        26.911130869108028
+      ],
+      [
+        75.76248291625792,
+        26.911130869108028
+      ],
+      [
+        75.76248291625792,
+        26.904239117692903
+      ]
+    ],
+    "environmentalRiskScore": 34,
+    "acquisitionRiskScore": 21,
+    "forestRightsApplicable": false,
+    "protectedZone": false,
+    "aiSummary": "Standard administrative land. Check local panchayat records for zoning changes.",
+    "createdAt": "2026-04-12T01:05:07.116Z",
+    "updatedAt": "2026-04-12T01:05:07.116Z"
+  },
+  {
+    "id": "par_zrtkaktcg",
+    "surveyNumber": "RAJ-JP-1022",
+    "village": "Jamwa Ramgarh",
+    "tehsil": "Jaipur",
+    "district": "Jaipur",
+    "state": "Rajasthan",
+    "ownerName": "State Gov",
+    "landType": "Panchayat",
+    "ownershipType": "Panchayat",
+    "areaInAcres": 35.7,
+    "polygonCoordinates": [
+      [
+        75.75988027164956,
+        26.956627429412574
+      ],
+      [
+        75.7672814649813,
+        26.956627429412574
+      ],
+      [
+        75.7672814649813,
+        26.964028622744305
+      ],
+      [
+        75.75988027164956,
+        26.964028622744305
+      ],
+      [
+        75.75988027164956,
+        26.956627429412574
+      ]
+    ],
+    "environmentalRiskScore": 10,
+    "acquisitionRiskScore": 92,
+    "forestRightsApplicable": false,
+    "protectedZone": false,
+    "aiSummary": "There is currently an active legal dispute on this parcel. Proceed with caution.",
+    "createdAt": "2026-04-12T01:05:07.116Z",
+    "updatedAt": "2026-04-12T01:05:07.116Z"
+  },
+  {
+    "id": "par_71j310zkw",
+    "surveyNumber": "RAJ-JP-1023",
+    "village": "Viratnagar",
+    "tehsil": "Jaipur",
+    "district": "Jaipur",
+    "state": "Rajasthan",
+    "ownerName": "State Gov",
+    "landType": "Panchayat",
+    "ownershipType": "Government",
+    "areaInAcres": 50.49,
+    "polygonCoordinates": [
+      [
+        75.75211920351819,
+        26.886164260548856
+      ],
+      [
+        75.76215510649622,
+        26.886164260548856
+      ],
+      [
+        75.76215510649622,
+        26.89620016352688
+      ],
+      [
+        75.75211920351819,
+        26.89620016352688
+      ],
+      [
+        75.75211920351819,
+        26.886164260548856
+      ]
+    ],
+    "environmentalRiskScore": 82,
+    "acquisitionRiskScore": 80,
+    "forestRightsApplicable": false,
+    "protectedZone": true,
+    "aiSummary": "This parcel overlaps with a protected forest boundary and may require environmental clearance before acquisition.",
+    "createdAt": "2026-04-12T01:05:07.116Z",
+    "updatedAt": "2026-04-12T01:05:07.116Z"
+  },
+  {
+    "id": "par_k0546k591",
+    "surveyNumber": "RAJ-JP-1024",
+    "village": "Amer",
+    "tehsil": "Jaipur",
+    "district": "Jaipur",
+    "state": "Rajasthan",
+    "ownerName": "State Gov",
+    "landType": "Panchayat",
+    "ownershipType": "Government",
+    "areaInAcres": 31.35,
+    "polygonCoordinates": [
+      [
+        75.78272186257956,
+        26.868912617944495
+      ],
+      [
+        75.78775029684645,
+        26.868912617944495
+      ],
+      [
+        75.78775029684645,
+        26.87394105221139
+      ],
+      [
+        75.78272186257956,
+        26.87394105221139
+      ],
+      [
+        75.78272186257956,
+        26.868912617944495
+      ]
+    ],
+    "environmentalRiskScore": 36,
+    "acquisitionRiskScore": 50,
+    "forestRightsApplicable": false,
+    "protectedZone": false,
+    "aiSummary": "Standard administrative land. Check local panchayat records for zoning changes.",
+    "createdAt": "2026-04-12T01:05:07.116Z",
+    "updatedAt": "2026-04-12T01:05:07.116Z"
+  },
+  {
+    "id": "par_nck0wcdhz",
+    "surveyNumber": "RAJ-JP-1025",
+    "village": "Chomu",
+    "tehsil": "Jaipur",
+    "district": "Jaipur",
+    "state": "Rajasthan",
+    "ownerName": "State Gov",
+    "landType": "Panchayat",
+    "ownershipType": "Government",
+    "areaInAcres": 15.97,
+    "polygonCoordinates": [
+      [
+        75.78118725445724,
+        26.913165413729388
+      ],
+      [
+        75.79610513838745,
+        26.913165413729388
+      ],
+      [
+        75.79610513838745,
+        26.928083297659594
+      ],
+      [
+        75.78118725445724,
+        26.928083297659594
+      ],
+      [
+        75.78118725445724,
+        26.913165413729388
+      ]
+    ],
+    "environmentalRiskScore": 23,
+    "acquisitionRiskScore": 33,
+    "forestRightsApplicable": false,
+    "protectedZone": false,
+    "aiSummary": "Standard administrative land. Check local panchayat records for zoning changes.",
+    "createdAt": "2026-04-12T01:05:07.116Z",
+    "updatedAt": "2026-04-12T01:05:07.116Z"
+  },
+  {
+    "id": "par_n0l6dqni8",
+    "surveyNumber": "RAJ-JP-1026",
+    "village": "Amer",
+    "tehsil": "Jaipur",
+    "district": "Jaipur",
+    "state": "Rajasthan",
+    "ownerName": "State Gov",
+    "landType": "Government",
+    "ownershipType": "Government",
+    "areaInAcres": 9.27,
+    "polygonCoordinates": [
+      [
+        75.78045505995091,
+        26.91692800585468
+      ],
+      [
+        75.78654852383964,
+        26.91692800585468
+      ],
+      [
+        75.78654852383964,
+        26.923021469743418
+      ],
+      [
+        75.78045505995091,
+        26.923021469743418
+      ],
+      [
+        75.78045505995091,
+        26.91692800585468
+      ]
+    ],
+    "environmentalRiskScore": 77,
+    "acquisitionRiskScore": 94,
+    "forestRightsApplicable": false,
+    "protectedZone": true,
+    "aiSummary": "This parcel overlaps with a protected forest boundary and may require environmental clearance before acquisition.",
+    "createdAt": "2026-04-12T01:05:07.116Z",
+    "updatedAt": "2026-04-12T01:05:07.116Z"
+  },
+  {
+    "id": "par_o4tgh30me",
+    "surveyNumber": "RAJ-JP-1027",
+    "village": "Sambhar",
+    "tehsil": "Jaipur",
+    "district": "Jaipur",
+    "state": "Rajasthan",
+    "ownerName": "State Gov",
+    "landType": "Government",
+    "ownershipType": "Panchayat",
+    "areaInAcres": 40.05,
+    "polygonCoordinates": [
+      [
+        75.78662495125349,
+        26.90894372136148
+      ],
+      [
+        75.79324192885585,
+        26.90894372136148
+      ],
+      [
+        75.79324192885585,
+        26.915560698963844
+      ],
+      [
+        75.78662495125349,
+        26.915560698963844
+      ],
+      [
+        75.78662495125349,
+        26.90894372136148
+      ]
+    ],
+    "environmentalRiskScore": 36,
+    "acquisitionRiskScore": 100,
+    "forestRightsApplicable": false,
+    "protectedZone": false,
+    "aiSummary": "There is currently an active legal dispute on this parcel. Proceed with caution.",
+    "createdAt": "2026-04-12T01:05:07.116Z",
+    "updatedAt": "2026-04-12T01:05:07.116Z"
+  },
+  {
+    "id": "par_mo8c2m5f2",
+    "surveyNumber": "RAJ-JP-1028",
+    "village": "Viratnagar",
+    "tehsil": "Jaipur",
+    "district": "Jaipur",
+    "state": "Rajasthan",
+    "ownerName": "State Gov",
+    "landType": "Government",
+    "ownershipType": "Government",
+    "areaInAcres": 40.95,
+    "polygonCoordinates": [
+      [
+        75.8202025312618,
+        26.88976901748547
+      ],
+      [
+        75.83476248733646,
+        26.88976901748547
+      ],
+      [
+        75.83476248733646,
+        26.90432897356013
+      ],
+      [
+        75.8202025312618,
+        26.90432897356013
+      ],
+      [
+        75.8202025312618,
+        26.88976901748547
+      ]
+    ],
+    "environmentalRiskScore": 6,
+    "acquisitionRiskScore": 32,
+    "forestRightsApplicable": false,
+    "protectedZone": false,
+    "aiSummary": "Standard administrative land. Check local panchayat records for zoning changes.",
+    "createdAt": "2026-04-12T01:05:07.116Z",
+    "updatedAt": "2026-04-12T01:05:07.116Z"
+  },
+  {
+    "id": "par_ci6pdfmvy",
+    "surveyNumber": "RAJ-JP-1029",
+    "village": "Sambhar",
+    "tehsil": "Jaipur",
+    "district": "Jaipur",
+    "state": "Rajasthan",
+    "ownerName": "State Gov",
+    "landType": "Government",
+    "ownershipType": "Panchayat",
+    "areaInAcres": 34.08,
+    "polygonCoordinates": [
+      [
+        75.7523379963064,
+        26.862618333825193
+      ],
+      [
+        75.76036421760564,
+        26.862618333825193
+      ],
+      [
+        75.76036421760564,
+        26.870644555124432
+      ],
+      [
+        75.7523379963064,
+        26.870644555124432
+      ],
+      [
+        75.7523379963064,
+        26.862618333825193
+      ]
+    ],
+    "environmentalRiskScore": 99,
+    "acquisitionRiskScore": 92,
+    "forestRightsApplicable": false,
+    "protectedZone": true,
+    "aiSummary": "This parcel overlaps with a protected forest boundary and may require environmental clearance before acquisition.",
+    "createdAt": "2026-04-12T01:05:07.116Z",
+    "updatedAt": "2026-04-12T01:05:07.116Z"
+  },
+  {
+    "id": "par_10ia1btwr",
+    "surveyNumber": "RAJ-JP-1030",
+    "village": "Amer",
+    "tehsil": "Jaipur",
+    "district": "Jaipur",
+    "state": "Rajasthan",
+    "ownerName": "State Gov",
+    "landType": "Government",
+    "ownershipType": "Government",
+    "areaInAcres": 5.16,
+    "polygonCoordinates": [
+      [
+        75.80863772344105,
+        26.897582767028478
+      ],
+      [
+        75.81413930233992,
+        26.897582767028478
+      ],
+      [
+        75.81413930233992,
+        26.90308434592735
+      ],
+      [
+        75.80863772344105,
+        26.90308434592735
+      ],
+      [
+        75.80863772344105,
+        26.897582767028478
+      ]
+    ],
+    "environmentalRiskScore": 2,
+    "acquisitionRiskScore": 10,
+    "forestRightsApplicable": false,
+    "protectedZone": false,
+    "aiSummary": "Standard administrative land. Check local panchayat records for zoning changes.",
+    "createdAt": "2026-04-12T01:05:07.116Z",
+    "updatedAt": "2026-04-12T01:05:07.116Z"
+  },
+  {
+    "id": "par_yipcr0x60",
+    "surveyNumber": "RAJ-JP-1031",
+    "village": "Kotputli",
+    "tehsil": "Jaipur",
+    "district": "Jaipur",
+    "state": "Rajasthan",
+    "ownerName": "State Gov",
+    "landType": "Government",
+    "ownershipType": "Panchayat",
+    "areaInAcres": 36.3,
+    "polygonCoordinates": [
+      [
+        75.75405068376035,
+        26.92995986185261
+      ],
+      [
+        75.7675238957296,
+        26.92995986185261
+      ],
+      [
+        75.7675238957296,
+        26.943433073821858
+      ],
+      [
+        75.75405068376035,
+        26.943433073821858
+      ],
+      [
+        75.75405068376035,
+        26.92995986185261
+      ]
+    ],
+    "environmentalRiskScore": 13,
+    "acquisitionRiskScore": 42,
+    "forestRightsApplicable": false,
+    "protectedZone": false,
+    "aiSummary": "Standard administrative land. Check local panchayat records for zoning changes.",
+    "createdAt": "2026-04-12T01:05:07.116Z",
+    "updatedAt": "2026-04-12T01:05:07.116Z"
+  },
+  {
+    "id": "par_rluhlt1q3",
+    "surveyNumber": "RAJ-JP-1032",
+    "village": "Kotputli",
+    "tehsil": "Jaipur",
+    "district": "Jaipur",
+    "state": "Rajasthan",
+    "ownerName": "State Gov",
+    "landType": "Private",
+    "ownershipType": "Government",
+    "areaInAcres": 48.37,
+    "polygonCoordinates": [
+      [
+        75.77315782966991,
+        26.905344812073437
+      ],
+      [
+        75.78399132271,
+        26.905344812073437
+      ],
+      [
+        75.78399132271,
+        26.91617830511352
+      ],
+      [
+        75.77315782966991,
+        26.91617830511352
+      ],
+      [
+        75.77315782966991,
+        26.905344812073437
+      ]
+    ],
+    "environmentalRiskScore": 40,
+    "acquisitionRiskScore": 33,
+    "forestRightsApplicable": false,
+    "protectedZone": false,
+    "aiSummary": "This land is privately owned and has no active disputes or protected status.",
+    "createdAt": "2026-04-12T01:05:07.116Z",
+    "updatedAt": "2026-04-12T01:05:07.116Z"
+  },
+  {
+    "id": "par_54zfk6pvl",
+    "surveyNumber": "RAJ-JP-1033",
+    "village": "Jobner",
+    "tehsil": "Jaipur",
+    "district": "Jaipur",
+    "state": "Rajasthan",
+    "ownerName": "State Gov",
+    "landType": "Mining",
+    "ownershipType": "Government",
+    "areaInAcres": 31.3,
+    "polygonCoordinates": [
+      [
+        75.79893999559025,
+        26.9246064966795
+      ],
+      [
+        75.8062256849686,
+        26.9246064966795
+      ],
+      [
+        75.8062256849686,
+        26.931892186057844
+      ],
+      [
+        75.79893999559025,
+        26.931892186057844
+      ],
+      [
+        75.79893999559025,
+        26.9246064966795
+      ]
+    ],
+    "environmentalRiskScore": 26,
+    "acquisitionRiskScore": 32,
+    "forestRightsApplicable": false,
+    "protectedZone": false,
+    "aiSummary": "Nearby mining activity increases the environmental risk score for this parcel.",
+    "createdAt": "2026-04-12T01:05:07.116Z",
+    "updatedAt": "2026-04-12T01:05:07.116Z"
+  },
+  {
+    "id": "par_smi2766ek",
+    "surveyNumber": "RAJ-JP-1034",
+    "village": "Sambhar",
+    "tehsil": "Jaipur",
+    "district": "Jaipur",
+    "state": "Rajasthan",
+    "ownerName": "State Gov",
+    "landType": "Private",
+    "ownershipType": "Panchayat",
+    "areaInAcres": 7.53,
+    "polygonCoordinates": [
+      [
+        75.77919883766629,
+        26.90835351194307
+      ],
+      [
+        75.79313065326377,
+        26.90835351194307
+      ],
+      [
+        75.79313065326377,
+        26.922285327540553
+      ],
+      [
+        75.77919883766629,
+        26.922285327540553
+      ],
+      [
+        75.77919883766629,
+        26.90835351194307
+      ]
+    ],
+    "environmentalRiskScore": 24,
+    "acquisitionRiskScore": 48,
+    "forestRightsApplicable": false,
+    "protectedZone": false,
+    "aiSummary": "This land is privately owned and has no active disputes or protected status.",
+    "createdAt": "2026-04-12T01:05:07.116Z",
+    "updatedAt": "2026-04-12T01:05:07.116Z"
+  },
+  {
+    "id": "par_d53380dc0",
+    "surveyNumber": "RAJ-JP-1035",
+    "village": "Kotputli",
+    "tehsil": "Jaipur",
+    "district": "Jaipur",
+    "state": "Rajasthan",
+    "ownerName": "State Gov",
+    "landType": "Government",
+    "ownershipType": "Panchayat",
+    "areaInAcres": 41.03,
+    "polygonCoordinates": [
+      [
+        75.76452173263613,
+        26.959404256565435
+      ],
+      [
+        75.7705034314396,
+        26.959404256565435
+      ],
+      [
+        75.7705034314396,
+        26.9653859553689
+      ],
+      [
+        75.76452173263613,
+        26.9653859553689
+      ],
+      [
+        75.76452173263613,
+        26.959404256565435
+      ]
+    ],
+    "environmentalRiskScore": 19,
+    "acquisitionRiskScore": 22,
+    "forestRightsApplicable": false,
+    "protectedZone": false,
+    "aiSummary": "Standard administrative land. Check local panchayat records for zoning changes.",
+    "createdAt": "2026-04-12T01:05:07.116Z",
+    "updatedAt": "2026-04-12T01:05:07.116Z"
+  },
+  {
+    "id": "par_1t2stokip",
+    "surveyNumber": "RAJ-JP-1036",
+    "village": "Chomu",
+    "tehsil": "Jaipur",
+    "district": "Jaipur",
+    "state": "Rajasthan",
+    "ownerName": "State Gov",
+    "landType": "Government",
+    "ownershipType": "Government",
+    "areaInAcres": 11.11,
+    "polygonCoordinates": [
+      [
+        75.7814945450444,
+        26.902548095352284
+      ],
+      [
+        75.79420861133852,
+        26.902548095352284
+      ],
+      [
+        75.79420861133852,
+        26.9152621616464
+      ],
+      [
+        75.7814945450444,
+        26.9152621616464
+      ],
+      [
+        75.7814945450444,
+        26.902548095352284
+      ]
+    ],
+    "environmentalRiskScore": 18,
+    "acquisitionRiskScore": 37,
+    "forestRightsApplicable": false,
+    "protectedZone": false,
+    "aiSummary": "Standard administrative land. Check local panchayat records for zoning changes.",
+    "createdAt": "2026-04-12T01:05:07.116Z",
+    "updatedAt": "2026-04-12T01:05:07.116Z"
+  },
+  {
+    "id": "par_y7y50uvk2",
+    "surveyNumber": "RAJ-JP-1037",
+    "village": "Jobner",
+    "tehsil": "Jaipur",
+    "district": "Jaipur",
+    "state": "Rajasthan",
+    "ownerName": "State Gov",
+    "landType": "Private",
+    "ownershipType": "Panchayat",
+    "areaInAcres": 14.77,
+    "polygonCoordinates": [
+      [
+        75.7639804544094,
+        26.934831018124335
+      ],
+      [
+        75.77816401750688,
+        26.934831018124335
+      ],
+      [
+        75.77816401750688,
+        26.949014581221807
+      ],
+      [
+        75.7639804544094,
+        26.949014581221807
+      ],
+      [
+        75.7639804544094,
+        26.934831018124335
+      ]
+    ],
+    "environmentalRiskScore": 2,
+    "acquisitionRiskScore": 16,
+    "forestRightsApplicable": false,
+    "protectedZone": false,
+    "aiSummary": "This land is privately owned and has no active disputes or protected status.",
+    "createdAt": "2026-04-12T01:05:07.116Z",
+    "updatedAt": "2026-04-12T01:05:07.116Z"
+  },
+  {
+    "id": "par_m0odisxjr",
+    "surveyNumber": "RAJ-JP-1038",
+    "village": "Bassi",
+    "tehsil": "Jaipur",
+    "district": "Jaipur",
+    "state": "Rajasthan",
+    "ownerName": "State Gov",
+    "landType": "Mining",
+    "ownershipType": "Government",
+    "areaInAcres": 1.97,
+    "polygonCoordinates": [
+      [
+        75.81137802754425,
+        26.950333536047452
+      ],
+      [
+        75.8225352168591,
+        26.950333536047452
+      ],
+      [
+        75.8225352168591,
+        26.961490725362292
+      ],
+      [
+        75.81137802754425,
+        26.961490725362292
+      ],
+      [
+        75.81137802754425,
+        26.950333536047452
+      ]
+    ],
+    "environmentalRiskScore": 35,
+    "acquisitionRiskScore": 87,
+    "forestRightsApplicable": false,
+    "protectedZone": false,
+    "aiSummary": "There is currently an active legal dispute on this parcel. Proceed with caution.",
+    "createdAt": "2026-04-12T01:05:07.116Z",
+    "updatedAt": "2026-04-12T01:05:07.116Z"
+  },
+  {
+    "id": "par_0mdfi2iko",
+    "surveyNumber": "RAJ-JP-1039",
+    "village": "Chomu",
+    "tehsil": "Jaipur",
+    "district": "Jaipur",
+    "state": "Rajasthan",
+    "ownerName": "State Gov",
+    "landType": "Panchayat",
+    "ownershipType": "Panchayat",
+    "areaInAcres": 44.73,
+    "polygonCoordinates": [
+      [
+        75.79179146360671,
+        26.869464597657228
+      ],
+      [
+        75.80528278451497,
+        26.869464597657228
+      ],
+      [
+        75.80528278451497,
+        26.88295591856549
+      ],
+      [
+        75.79179146360671,
+        26.88295591856549
+      ],
+      [
+        75.79179146360671,
+        26.869464597657228
+      ]
+    ],
+    "environmentalRiskScore": 94,
+    "acquisitionRiskScore": 95,
+    "forestRightsApplicable": false,
+    "protectedZone": true,
+    "aiSummary": "This parcel overlaps with a protected forest boundary and may require environmental clearance before acquisition.",
+    "createdAt": "2026-04-12T01:05:07.116Z",
+    "updatedAt": "2026-04-12T01:05:07.116Z"
+  },
+  {
+    "id": "par_axhek0l2z",
+    "surveyNumber": "RAJ-JP-1040",
+    "village": "Jobner",
+    "tehsil": "Jaipur",
+    "district": "Jaipur",
+    "state": "Rajasthan",
+    "ownerName": "State Gov",
+    "landType": "Panchayat",
+    "ownershipType": "Panchayat",
+    "areaInAcres": 50.12,
+    "polygonCoordinates": [
+      [
+        75.79470037056447,
+        26.910172162329552
+      ],
+      [
+        75.8036830153036,
+        26.910172162329552
+      ],
+      [
+        75.8036830153036,
+        26.919154807068683
+      ],
+      [
+        75.79470037056447,
+        26.919154807068683
+      ],
+      [
+        75.79470037056447,
+        26.910172162329552
+      ]
+    ],
+    "environmentalRiskScore": 40,
+    "acquisitionRiskScore": 46,
+    "forestRightsApplicable": false,
+    "protectedZone": false,
+    "aiSummary": "Standard administrative land. Check local panchayat records for zoning changes.",
+    "createdAt": "2026-04-12T01:05:07.116Z",
+    "updatedAt": "2026-04-12T01:05:07.116Z"
+  },
+  {
+    "id": "par_ghm41txqw",
+    "surveyNumber": "RAJ-JP-1041",
+    "village": "Jamwa Ramgarh",
+    "tehsil": "Jaipur",
+    "district": "Jaipur",
+    "state": "Rajasthan",
+    "ownerName": "State Gov",
+    "landType": "Panchayat",
+    "ownershipType": "Panchayat",
+    "areaInAcres": 9.64,
+    "polygonCoordinates": [
+      [
+        75.74643564609137,
+        26.883788085719342
+      ],
+      [
+        75.75879251901443,
+        26.883788085719342
+      ],
+      [
+        75.75879251901443,
+        26.896144958642402
+      ],
+      [
+        75.74643564609137,
+        26.896144958642402
+      ],
+      [
+        75.74643564609137,
+        26.883788085719342
+      ]
+    ],
+    "environmentalRiskScore": 92,
+    "acquisitionRiskScore": 93,
+    "forestRightsApplicable": false,
+    "protectedZone": true,
+    "aiSummary": "This parcel overlaps with a protected forest boundary and may require environmental clearance before acquisition.",
+    "createdAt": "2026-04-12T01:05:07.116Z",
+    "updatedAt": "2026-04-12T01:05:07.116Z"
+  },
+  {
+    "id": "par_pnxf538kz",
+    "surveyNumber": "RAJ-JP-1042",
+    "village": "Sambhar",
+    "tehsil": "Jaipur",
+    "district": "Jaipur",
+    "state": "Rajasthan",
+    "ownerName": "State Gov",
+    "landType": "Private",
+    "ownershipType": "Panchayat",
+    "areaInAcres": 37.15,
+    "polygonCoordinates": [
+      [
+        75.75037452851728,
+        26.903651939061902
+      ],
+      [
+        75.75721444451543,
+        26.903651939061902
+      ],
+      [
+        75.75721444451543,
+        26.910491855060044
+      ],
+      [
+        75.75037452851728,
+        26.910491855060044
+      ],
+      [
+        75.75037452851728,
+        26.903651939061902
+      ]
+    ],
+    "environmentalRiskScore": 40,
+    "acquisitionRiskScore": 85,
+    "forestRightsApplicable": false,
+    "protectedZone": false,
+    "aiSummary": "There is currently an active legal dispute on this parcel. Proceed with caution.",
+    "createdAt": "2026-04-12T01:05:07.116Z",
+    "updatedAt": "2026-04-12T01:05:07.116Z"
+  },
+  {
+    "id": "par_ewyyjjbh0",
+    "surveyNumber": "RAJ-JP-1043",
+    "village": "Jobner",
+    "tehsil": "Jaipur",
+    "district": "Jaipur",
+    "state": "Rajasthan",
+    "ownerName": "State Gov",
+    "landType": "Panchayat",
+    "ownershipType": "Panchayat",
+    "areaInAcres": 32.42,
+    "polygonCoordinates": [
+      [
+        75.80099406944981,
+        26.94286733778627
+      ],
+      [
+        75.80826570060889,
+        26.94286733778627
+      ],
+      [
+        75.80826570060889,
+        26.950138968945346
+      ],
+      [
+        75.80099406944981,
+        26.950138968945346
+      ],
+      [
+        75.80099406944981,
+        26.94286733778627
+      ]
+    ],
+    "environmentalRiskScore": 17,
+    "acquisitionRiskScore": 27,
+    "forestRightsApplicable": false,
+    "protectedZone": false,
+    "aiSummary": "Standard administrative land. Check local panchayat records for zoning changes.",
+    "createdAt": "2026-04-12T01:05:07.116Z",
+    "updatedAt": "2026-04-12T01:05:07.116Z"
+  },
+  {
+    "id": "par_2ri8dfl3q",
+    "surveyNumber": "RAJ-JP-1044",
+    "village": "Viratnagar",
+    "tehsil": "Jaipur",
+    "district": "Jaipur",
+    "state": "Rajasthan",
+    "ownerName": "State Gov",
+    "landType": "Forest",
+    "ownershipType": "Government",
+    "areaInAcres": 4.51,
+    "polygonCoordinates": [
+      [
+        75.77381625774612,
+        26.96062208556319
+      ],
+      [
+        75.78705274162563,
+        26.96062208556319
+      ],
+      [
+        75.78705274162563,
+        26.973858569442697
+      ],
+      [
+        75.77381625774612,
+        26.973858569442697
+      ],
+      [
+        75.77381625774612,
+        26.96062208556319
+      ]
+    ],
+    "environmentalRiskScore": 12,
+    "acquisitionRiskScore": 14,
+    "forestRightsApplicable": false,
+    "protectedZone": false,
+    "aiSummary": "Standard administrative land. Check local panchayat records for zoning changes.",
+    "createdAt": "2026-04-12T01:05:07.116Z",
+    "updatedAt": "2026-04-12T01:05:07.116Z"
+  },
+  {
+    "id": "par_09xod2yr3",
+    "surveyNumber": "RAJ-JP-1045",
+    "village": "Shahpura",
+    "tehsil": "Jaipur",
+    "district": "Jaipur",
+    "state": "Rajasthan",
+    "ownerName": "State Gov",
+    "landType": "Forest",
+    "ownershipType": "Government",
+    "areaInAcres": 26.1,
+    "polygonCoordinates": [
+      [
+        75.7473326724379,
+        26.865968659953637
+      ],
+      [
+        75.76149903588835,
+        26.865968659953637
+      ],
+      [
+        75.76149903588835,
+        26.880135023404083
+      ],
+      [
+        75.7473326724379,
+        26.880135023404083
+      ],
+      [
+        75.7473326724379,
+        26.865968659953637
+      ]
+    ],
+    "environmentalRiskScore": 74,
+    "acquisitionRiskScore": 88,
+    "forestRightsApplicable": false,
+    "protectedZone": true,
+    "aiSummary": "This parcel overlaps with a protected forest boundary and may require environmental clearance before acquisition.",
+    "createdAt": "2026-04-12T01:05:07.116Z",
+    "updatedAt": "2026-04-12T01:05:07.116Z"
+  },
+  {
+    "id": "par_hf5lc1ucg",
+    "surveyNumber": "RAJ-JP-1046",
+    "village": "Shahpura",
+    "tehsil": "Jaipur",
+    "district": "Jaipur",
+    "state": "Rajasthan",
+    "ownerName": "State Gov",
+    "landType": "Forest",
+    "ownershipType": "Government",
+    "areaInAcres": 6.31,
+    "polygonCoordinates": [
+      [
+        75.7641075296824,
+        26.942020263663927
+      ],
+      [
+        75.7721195022998,
+        26.942020263663927
+      ],
+      [
+        75.7721195022998,
+        26.950032236281324
+      ],
+      [
+        75.7641075296824,
+        26.950032236281324
+      ],
+      [
+        75.7641075296824,
+        26.942020263663927
+      ]
+    ],
+    "environmentalRiskScore": 13,
+    "acquisitionRiskScore": 16,
+    "forestRightsApplicable": false,
+    "protectedZone": false,
+    "aiSummary": "Standard administrative land. Check local panchayat records for zoning changes.",
+    "createdAt": "2026-04-12T01:05:07.116Z",
+    "updatedAt": "2026-04-12T01:05:07.116Z"
+  },
+  {
+    "id": "par_mkd1quqmg",
+    "surveyNumber": "RAJ-JP-1047",
+    "village": "Viratnagar",
+    "tehsil": "Jaipur",
+    "district": "Jaipur",
+    "state": "Rajasthan",
+    "ownerName": "State Gov",
+    "landType": "Mining",
+    "ownershipType": "Panchayat",
+    "areaInAcres": 14.46,
+    "polygonCoordinates": [
+      [
+        75.75580078599633,
+        26.86308045834917
+      ],
+      [
+        75.76283895979665,
+        26.86308045834917
+      ],
+      [
+        75.76283895979665,
+        26.87011863214949
+      ],
+      [
+        75.75580078599633,
+        26.87011863214949
+      ],
+      [
+        75.75580078599633,
+        26.86308045834917
+      ]
+    ],
+    "environmentalRiskScore": 16,
+    "acquisitionRiskScore": 35,
+    "forestRightsApplicable": false,
+    "protectedZone": false,
+    "aiSummary": "Nearby mining activity increases the environmental risk score for this parcel.",
+    "createdAt": "2026-04-12T01:05:07.116Z",
+    "updatedAt": "2026-04-12T01:05:07.116Z"
+  },
+  {
+    "id": "par_p7qg27edy",
+    "surveyNumber": "RAJ-JP-1048",
+    "village": "Amer",
+    "tehsil": "Jaipur",
+    "district": "Jaipur",
+    "state": "Rajasthan",
+    "ownerName": "State Gov",
+    "landType": "Mining",
+    "ownershipType": "Panchayat",
+    "areaInAcres": 6.46,
+    "polygonCoordinates": [
+      [
+        75.81728499607543,
+        26.868895950733922
+      ],
+      [
+        75.82741392017323,
+        26.868895950733922
+      ],
+      [
+        75.82741392017323,
+        26.879024874831718
+      ],
+      [
+        75.81728499607543,
+        26.879024874831718
+      ],
+      [
+        75.81728499607543,
+        26.868895950733922
+      ]
+    ],
+    "environmentalRiskScore": 32,
+    "acquisitionRiskScore": 11,
+    "forestRightsApplicable": false,
+    "protectedZone": false,
+    "aiSummary": "Nearby mining activity increases the environmental risk score for this parcel.",
+    "createdAt": "2026-04-12T01:05:07.116Z",
+    "updatedAt": "2026-04-12T01:05:07.116Z"
+  },
+  {
+    "id": "par_rby3aenbj",
+    "surveyNumber": "RAJ-JP-1049",
+    "village": "Amer",
+    "tehsil": "Jaipur",
+    "district": "Jaipur",
+    "state": "Rajasthan",
+    "ownerName": "State Gov",
+    "landType": "Mining",
+    "ownershipType": "Government",
+    "areaInAcres": 41.14,
+    "polygonCoordinates": [
+      [
+        75.81089640311211,
+        26.9325964767894
+      ],
+      [
+        75.81590478002305,
+        26.9325964767894
+      ],
+      [
+        75.81590478002305,
+        26.93760485370034
+      ],
+      [
+        75.81089640311211,
+        26.93760485370034
+      ],
+      [
+        75.81089640311211,
+        26.9325964767894
+      ]
+    ],
+    "environmentalRiskScore": 32,
+    "acquisitionRiskScore": 100,
+    "forestRightsApplicable": false,
+    "protectedZone": false,
+    "aiSummary": "There is currently an active legal dispute on this parcel. Proceed with caution.",
+    "createdAt": "2026-04-12T01:05:07.116Z",
+    "updatedAt": "2026-04-12T01:05:07.116Z"
+  },
+  {
+    "id": "par_2dao57xuf",
+    "surveyNumber": "RAJ-JP-1050",
+    "village": "Jamwa Ramgarh",
+    "tehsil": "Jaipur",
+    "district": "Jaipur",
+    "state": "Rajasthan",
+    "ownerName": "State Gov",
+    "landType": "Mining",
+    "ownershipType": "Government",
+    "areaInAcres": 33.34,
+    "polygonCoordinates": [
+      [
+        75.80758711680022,
+        26.92707973066228
+      ],
+      [
+        75.81561658886427,
+        26.92707973066228
+      ],
+      [
+        75.81561658886427,
+        26.93510920272633
+      ],
+      [
+        75.80758711680022,
+        26.93510920272633
+      ],
+      [
+        75.80758711680022,
+        26.92707973066228
+      ]
+    ],
+    "environmentalRiskScore": 7,
+    "acquisitionRiskScore": 95,
+    "forestRightsApplicable": false,
+    "protectedZone": false,
+    "aiSummary": "There is currently an active legal dispute on this parcel. Proceed with caution.",
+    "createdAt": "2026-04-12T01:05:07.116Z",
+    "updatedAt": "2026-04-12T01:05:07.116Z"
+  }
+];
+const mockProjects = [
+  {
+    "id": "prj_pbi78tv00",
+    "name": "Stone Mining Zone A",
+    "type": "Stone mining",
+    "description": "Large scale stone extraction.",
+    "status": "Active",
+    "landParcelId": "par_sutbwunlj"
+  },
+  {
+    "id": "prj_nwjzvdjq0",
+    "name": "Stone Mining Zone A",
+    "type": "Stone mining",
+    "description": "Large scale stone extraction.",
+    "status": "Active",
+    "landParcelId": "par_wnzjeggap"
+  },
+  {
+    "id": "prj_fzgk919nn",
+    "name": "Stone Mining Zone A",
+    "type": "Stone mining",
+    "description": "Large scale stone extraction.",
+    "status": "Active",
+    "landParcelId": "par_jzw11qhz9"
+  },
+  {
+    "id": "prj_pqlc43h72",
+    "name": "Stone Mining Zone A",
+    "type": "Stone mining",
+    "description": "Large scale stone extraction.",
+    "status": "Active",
+    "landParcelId": "par_bpu1ky3fj"
+  },
+  {
+    "id": "prj_204q6y9ek",
+    "name": "Stone Mining Zone A",
+    "type": "Stone mining",
+    "description": "Large scale stone extraction.",
+    "status": "Active",
+    "landParcelId": "par_l2cx427mf"
+  },
+  {
+    "id": "prj_lnqx08wpb",
+    "name": "Bisalpur Dam Expansion",
+    "type": "Dam expansion",
+    "description": "Water reservoir scaling project.",
+    "status": "Planned",
+    "landParcelId": "par_8nh78tyfh"
+  },
+  {
+    "id": "prj_8wg7qu2uv",
+    "name": "Bisalpur Dam Expansion",
+    "type": "Dam expansion",
+    "description": "Water reservoir scaling project.",
+    "status": "Planned",
+    "landParcelId": "par_j1wt0ycw5"
+  },
+  {
+    "id": "prj_qlrb02dqz",
+    "name": "Bisalpur Dam Expansion",
+    "type": "Dam expansion",
+    "description": "Water reservoir scaling project.",
+    "status": "Planned",
+    "landParcelId": "par_xn3jl3dj2"
+  },
+  {
+    "id": "prj_clcm8w9sz",
+    "name": "Bisalpur Dam Expansion",
+    "type": "Dam expansion",
+    "description": "Water reservoir scaling project.",
+    "status": "Planned",
+    "landParcelId": "par_dncj1nxcc"
+  },
+  {
+    "id": "prj_iww1cpzi8",
+    "name": "Bisalpur Dam Expansion",
+    "type": "Dam expansion",
+    "description": "Water reservoir scaling project.",
+    "status": "Planned",
+    "landParcelId": "par_k69m6ke9q"
+  },
+  {
+    "id": "prj_2qmhyjmgf",
+    "name": "Solar Farm Alpha",
+    "type": "Solar farm",
+    "description": "Renewable energy array.",
+    "status": "Completed",
+    "landParcelId": "par_nck0wcdhz"
+  },
+  {
+    "id": "prj_6mcja30ay",
+    "name": "Solar Farm Alpha",
+    "type": "Solar farm",
+    "description": "Renewable energy array.",
+    "status": "Completed",
+    "landParcelId": "par_rluhlt1q3"
+  },
+  {
+    "id": "prj_3gqhhtud2",
+    "name": "Solar Farm Alpha",
+    "type": "Solar farm",
+    "description": "Renewable energy array.",
+    "status": "Completed",
+    "landParcelId": "par_axhek0l2z"
+  },
+  {
+    "id": "prj_uhgpb1l15",
+    "name": "Solar Farm Alpha",
+    "type": "Solar farm",
+    "description": "Renewable energy array.",
+    "status": "Completed",
+    "landParcelId": "par_ewyyjjbh0"
+  },
+  {
+    "id": "prj_pw6ssrnyn",
+    "name": "Solar Farm Alpha",
+    "type": "Solar farm",
+    "description": "Renewable energy array.",
+    "status": "Completed",
+    "landParcelId": "par_2dao57xuf"
+  }
+];
+const mockCases = [
+  {
+    "id": "cas_n4p9znunh",
+    "caseNumber": "NGT/2026/11",
+    "status": "Ongoing",
+    "description": "Forest rights conflict",
+    "court": "National Green Tribunal",
+    "landParcelId": "par_l9o6q8ptx"
+  },
+  {
+    "id": "cas_hf4xqp0gf",
+    "caseNumber": "NGT/2026/12",
+    "status": "Ongoing",
+    "description": "Forest rights conflict",
+    "court": "National Green Tribunal",
+    "landParcelId": "par_omoc74tzd"
+  },
+  {
+    "id": "cas_11fca0pus",
+    "caseNumber": "NGT/2026/13",
+    "status": "Ongoing",
+    "description": "Forest rights conflict",
+    "court": "National Green Tribunal",
+    "landParcelId": "par_ohi0h49tt"
+  },
+  {
+    "id": "cas_4v64zo79k",
+    "caseNumber": "NGT/2026/14",
+    "status": "Ongoing",
+    "description": "Forest rights conflict",
+    "court": "National Green Tribunal",
+    "landParcelId": "par_zeynv0yuq"
+  },
+  {
+    "id": "cas_8sv2w3se9",
+    "caseNumber": "NGT/2026/15",
+    "status": "Ongoing",
+    "description": "Forest rights conflict",
+    "court": "National Green Tribunal",
+    "landParcelId": "par_ncgmg45q5"
+  },
+  {
+    "id": "cas_ooacrl4ko",
+    "caseNumber": "NGT/2026/16",
+    "status": "Ongoing",
+    "description": "Forest rights conflict",
+    "court": "National Green Tribunal",
+    "landParcelId": "par_4cqr9f3bi"
+  },
+  {
+    "id": "cas_sjbt1nm1w",
+    "caseNumber": "NGT/2026/17",
+    "status": "Ongoing",
+    "description": "Forest rights conflict",
+    "court": "National Green Tribunal",
+    "landParcelId": "par_9a53g8033"
+  },
+  {
+    "id": "cas_5he6jed6b",
+    "caseNumber": "NGT/2026/18",
+    "status": "Ongoing",
+    "description": "Forest rights conflict",
+    "court": "National Green Tribunal",
+    "landParcelId": "par_d9sdv5nxg"
+  },
+  {
+    "id": "cas_kk6sjoa0u",
+    "caseNumber": "NGT/2026/19",
+    "status": "Ongoing",
+    "description": "Forest rights conflict",
+    "court": "National Green Tribunal",
+    "landParcelId": "par_iku8gaugu"
+  },
+  {
+    "id": "cas_sdyzluahb",
+    "caseNumber": "NGT/2026/20",
+    "status": "Ongoing",
+    "description": "Forest rights conflict",
+    "court": "National Green Tribunal",
+    "landParcelId": "par_f8tbbb6tj"
+  }
+];
+const mockClearances = [
+  {
+    "id": "clr_z1slmxixz",
+    "certificateNumber": "EC/2026/21",
+    "status": "Approved",
+    "issuedDate": "2026-04-12T01:05:07.116Z",
+    "landParcelId": "par_zrtkaktcg"
+  },
+  {
+    "id": "clr_bzoywjehl",
+    "certificateNumber": "EC/2026/22",
+    "status": "Approved",
+    "issuedDate": "2026-04-12T01:05:07.116Z",
+    "landParcelId": "par_71j310zkw"
+  },
+  {
+    "id": "clr_vz2lmh69n",
+    "certificateNumber": "EC/2026/23",
+    "status": "Approved",
+    "issuedDate": "2026-04-12T01:05:07.116Z",
+    "landParcelId": "par_k0546k591"
+  },
+  {
+    "id": "clr_sf442voa0",
+    "certificateNumber": "EC/2026/24",
+    "status": "Approved",
+    "issuedDate": "2026-04-12T01:05:07.116Z",
+    "landParcelId": "par_nck0wcdhz"
+  },
+  {
+    "id": "clr_e0vnw4ivv",
+    "certificateNumber": "EC/2026/25",
+    "status": "Approved",
+    "issuedDate": "2026-04-12T01:05:07.116Z",
+    "landParcelId": "par_n0l6dqni8"
+  },
+  {
+    "id": "clr_28vzcaesk",
+    "certificateNumber": "EC/2026/26",
+    "status": "Approved",
+    "issuedDate": "2026-04-12T01:05:07.116Z",
+    "landParcelId": "par_o4tgh30me"
+  },
+  {
+    "id": "clr_yhjdiiaoi",
+    "certificateNumber": "EC/2026/27",
+    "status": "Approved",
+    "issuedDate": "2026-04-12T01:05:07.116Z",
+    "landParcelId": "par_mo8c2m5f2"
+  },
+  {
+    "id": "clr_mhfu40ur9",
+    "certificateNumber": "EC/2026/28",
+    "status": "Approved",
+    "issuedDate": "2026-04-12T01:05:07.116Z",
+    "landParcelId": "par_ci6pdfmvy"
+  },
+  {
+    "id": "clr_djyf8akzj",
+    "certificateNumber": "EC/2026/29",
+    "status": "Approved",
+    "issuedDate": "2026-04-12T01:05:07.116Z",
+    "landParcelId": "par_10ia1btwr"
+  },
+  {
+    "id": "clr_9g8v2an7i",
+    "certificateNumber": "EC/2026/30",
+    "status": "Approved",
+    "issuedDate": "2026-04-12T01:05:07.116Z",
+    "landParcelId": "par_yipcr0x60"
+  }
+];
+const mockNotifications = [
+  {
+    "id": "not_4ge1aios5",
+    "title": "Zoning Change",
+    "message": "Status updated by local authority.",
+    "type": "Alert",
+    "landParcelId": "par_rluhlt1q3"
+  },
+  {
+    "id": "not_a0p4y12uf",
+    "title": "Zoning Change",
+    "message": "Status updated by local authority.",
+    "type": "Alert",
+    "landParcelId": "par_54zfk6pvl"
+  },
+  {
+    "id": "not_116jttmik",
+    "title": "Zoning Change",
+    "message": "Status updated by local authority.",
+    "type": "Alert",
+    "landParcelId": "par_smi2766ek"
+  },
+  {
+    "id": "not_e1ziiy0jq",
+    "title": "Zoning Change",
+    "message": "Status updated by local authority.",
+    "type": "Alert",
+    "landParcelId": "par_d53380dc0"
+  },
+  {
+    "id": "not_ssq6nqb6r",
+    "title": "Zoning Change",
+    "message": "Status updated by local authority.",
+    "type": "Alert",
+    "landParcelId": "par_1t2stokip"
+  },
+  {
+    "id": "not_0qihsbvp3",
+    "title": "Zoning Change",
+    "message": "Status updated by local authority.",
+    "type": "Alert",
+    "landParcelId": "par_y7y50uvk2"
+  },
+  {
+    "id": "not_4yegiiouk",
+    "title": "Zoning Change",
+    "message": "Status updated by local authority.",
+    "type": "Alert",
+    "landParcelId": "par_m0odisxjr"
+  },
+  {
+    "id": "not_rchnmeffg",
+    "title": "Zoning Change",
+    "message": "Status updated by local authority.",
+    "type": "Alert",
+    "landParcelId": "par_0mdfi2iko"
+  },
+  {
+    "id": "not_pgp8wak0o",
+    "title": "Zoning Change",
+    "message": "Status updated by local authority.",
+    "type": "Alert",
+    "landParcelId": "par_axhek0l2z"
+  },
+  {
+    "id": "not_y3i8fo0wm",
+    "title": "Zoning Change",
+    "message": "Status updated by local authority.",
+    "type": "Alert",
+    "landParcelId": "par_ghm41txqw"
+  }
+];
+
+async function main() {
+  console.log('Seeding database with Jaipur realistic datasets...');
+
+  // Inject 50 Parcels
+  for (const parcel of mockParcels) {
+    await prisma.landParcel.upsert({
+      where: { surveyNumber: parcel.surveyNumber },
+      update: {},
+      create: {
+        id: parcel.id,
+        surveyNumber: parcel.surveyNumber,
+        village: parcel.village,
+        tehsil: parcel.tehsil,
+        district: parcel.district,
+        state: parcel.state,
+        ownerName: parcel.ownerName,
+        landType: parcel.landType,
+        ownershipType: parcel.ownershipType,
+        areaInAcres: parcel.areaInAcres,
+        polygonCoordinates: parcel.polygonCoordinates,
+        environmentalRiskScore: parcel.environmentalRiskScore,
+        acquisitionRiskScore: parcel.acquisitionRiskScore,
+        forestRightsApplicable: parcel.forestRightsApplicable,
+        protectedZone: parcel.protectedZone,
+        aiSummary: parcel.aiSummary,
+      }
+    });
+  }
+
+  // Inject Relations
+  for (const proj of mockProjects) {
+    await prisma.project.create({ data: proj });
+  }
+  for (const c of mockCases) {
+    await prisma.courtCase.create({ data: c });
+  }
+  for (const c of mockClearances) {
+    await prisma.environmentalClearance.create({ data: c });
+  }
+  for (const n of mockNotifications) {
+    await prisma.notification.create({ data: n });
+  }
+
+  // Generate 5 NGOs, 5 Lawyers, 5 Journalists
+  const users = [...Array(5).fill('NGO'), ...Array(5).fill('Lawyer'), ...Array(5).fill('Journalist')];
+  for (let i = 0; i < users.length; i++) {
+    await prisma.user.create({
+      data: {
+        email: `${users[i].toLowerCase()}-${i}@example.com`,
+        name: `Demo ${users[i]} ${i}`,
+        role: users[i]
+      }
+    });
+  }
+}
+
+main()
+  .catch((e) => {
+    console.error(e);
+    process.exit(1);
+  })
+  .finally(async () => {
+    await prisma.$disconnect();
+  });
