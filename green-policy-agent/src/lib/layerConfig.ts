@@ -1,39 +1,28 @@
 /**
  * layerConfig.ts
- * Shared layer configuration constants — safe for both server and client.
- * Keeping these separate from MapViewer.tsx avoids SSR "window is not defined" errors.
+ * Simplified layer visibility config — checkbox-only, no opacity sliders.
+ * Grouped into Ownership, Risk, Infrastructure categories for the sidebar.
  */
 
 export interface LayerVisibility {
-  // Ownership-based parcel layers
+  // Ownership
   privateLand: boolean;
   governmentLand: boolean;
   panchayatLand: boolean;
   forestLand: boolean;
-  // Overlay / zone layers
+  // Risk / Zones
   miningZone: boolean;
   protectedArea: boolean;
   courtDispute: boolean;
   floodRisk: boolean;
-  // Infrastructure layers
-  highways: boolean;
-  railways: boolean;
-  // Label layer
-  villageLabels: boolean;
-}
-
-export interface LayerOpacity {
-  privateLand: number;
-  governmentLand: number;
-  panchayatLand: number;
-  forestLand: number;
-  miningZone: number;
-  protectedArea: number;
-  courtDispute: number;
-  floodRisk: number;
-  highways: number;
-  railways: number;
-  villageLabels: number;
+  // Infrastructure
+  highway: boolean;
+  roads: boolean;
+  railway: boolean;
+  stream: boolean;
+  // Labels
+  landmarks: boolean;
+  zoneBoundaries: boolean;
 }
 
 export const DEFAULT_LAYER_VISIBILITY: LayerVisibility = {
@@ -44,22 +33,50 @@ export const DEFAULT_LAYER_VISIBILITY: LayerVisibility = {
   miningZone: true,
   protectedArea: true,
   courtDispute: true,
-  floodRisk: false,
-  highways: false,
-  railways: false,
-  villageLabels: true,
+  floodRisk: true,
+  highway: true,
+  roads: true,
+  railway: true,
+  stream: true,
+  landmarks: true,
+  zoneBoundaries: true,
 };
 
-export const DEFAULT_LAYER_OPACITY: LayerOpacity = {
-  privateLand: 0.40,
-  governmentLand: 0.40,
-  panchayatLand: 0.40,
-  forestLand: 0.45,
-  miningZone: 0.45,
-  protectedArea: 0.40,
-  courtDispute: 0.55,
-  floodRisk: 0.30,
-  highways: 0.60,
-  railways: 0.60,
-  villageLabels: 1.0,
-};
+export interface LayerGroup {
+  title: string;
+  emoji: string;
+  keys: { key: keyof LayerVisibility; label: string; color: string }[];
+}
+
+export const LAYER_GROUPS: LayerGroup[] = [
+  {
+    title: 'Ownership Type',
+    emoji: '🏠',
+    keys: [
+      { key: 'privateLand', label: 'Private Land', color: '#86efac' },
+      { key: 'governmentLand', label: 'Government Land', color: '#93c5fd' },
+      { key: 'panchayatLand', label: 'Panchayat Land', color: '#fde68a' },
+      { key: 'forestLand', label: 'Forest Land', color: '#4ade80' },
+    ],
+  },
+  {
+    title: 'Risk Layers',
+    emoji: '⚠️',
+    keys: [
+      { key: 'miningZone', label: 'Mining Zone', color: '#fb923c' },
+      { key: 'protectedArea', label: 'Protected Area', color: '#c4b5fd' },
+      { key: 'courtDispute', label: 'Court Dispute', color: '#fca5a5' },
+      { key: 'floodRisk', label: 'Flood Risk', color: '#67e8f9' },
+    ],
+  },
+  {
+    title: 'Infrastructure',
+    emoji: '🛤️',
+    keys: [
+      { key: 'highway', label: 'Highway', color: '#f97316' },
+      { key: 'roads', label: 'Village Roads', color: '#a1a1aa' },
+      { key: 'railway', label: 'Railway Line', color: '#e879f9' },
+      { key: 'stream', label: 'Water Bodies', color: '#22d3ee' },
+    ],
+  },
+];

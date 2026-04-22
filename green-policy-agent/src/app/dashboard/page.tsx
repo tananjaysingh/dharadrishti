@@ -1,10 +1,11 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import Link from "next/link";
 import {
-  ArrowLeft, Filter, Search, Download, Layers, Activity, User, Bell,
-  MapPin, Zap, AlertTriangle, Clock, X, Info, RotateCcw
+  ArrowLeft, Search, Download, User, Bell, X, RotateCcw, Play, Pause,
+  MapPin, AlertTriangle, Shield, FileText, Clock, ChevronDown,
+  Landmark, TreePine, Droplets, Mountain, Scale, Building2, Home
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -12,602 +13,458 @@ import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import dynamic from "next/dynamic";
 
-const MapViewer = dynamic(() => import('@/components/map/MapViewer'), {
+const MapViewer = dynamic(() => import("@/components/map/MapViewer"), {
   ssr: false,
   loading: () => <div className="w-full h-full bg-slate-900 animate-pulse rounded-xl border border-white/10" />,
 });
 
-import { AIPanel } from "@/components/dashboard/AIPanel";
-import { mockLandParcels } from "@/data/mockLandParcels";
+import {
+  demoParcels,
+  getParcelStats,
+  DEMO_STEPS,
+  LAND_TYPE_COLORS,
+  RISK_TAG_COLORS,
+  RECOMMENDATION_COLORS,
+  type DemoParcel,
+  type ParcelLandType,
+} from "@/data/demoVillageData";
 import {
   DEFAULT_LAYER_VISIBILITY,
-  DEFAULT_LAYER_OPACITY,
-  LayerVisibility,
-  LayerOpacity,
+  LAYER_GROUPS,
+  type LayerVisibility,
 } from "@/lib/layerConfig";
-import {
-  jaipurLocalParcels,
-  JaipurParcel,
-  ENV_RISK_COLOR,
-  DISPUTE_COLOR,
-  bumpRisk,
-  cycleDispute,
-} from "@/data/jaipurLocalData";
 
-// ── Helpers ───────────────────────────────────────────────────────────────────
-
-function timeAgo(ts: number): string {
-  const secs = Math.floor((Date.now() - ts) / 1000);
-  if (secs < 5) return "just now";
-  if (secs < 60) return `${secs} seconds ago`;
-  if (secs < 120) return "1 minute ago";
-  return `${Math.floor(secs / 60)} minutes ago`;
-}
-
-const LAYER_META: { key: keyof LayerVisibility; label: string; color: string; emoji: string }[] = [
-  // Ownership layers
-  { key: 'privateLand',    label: 'Private Land',      color: '#86efac', emoji: '🟩' },
-  { key: 'governmentLand', label: 'Government Land',   color: '#93c5fd', emoji: '🟦' },
-  { key: 'panchayatLand',  label: 'Panchayat Land',   color: '#fde68a', emoji: '🟨' },
-  { key: 'forestLand',     label: 'Forest Land',       color: '#4ade80', emoji: '🌲' },
-  // Zone / risk layers
-  { key: 'miningZone',     label: 'Mining Zone',       color: '#fb923c', emoji: '⛏️' },
-  { key: 'protectedArea',  label: 'Protected Area',    color: '#c4b5fd', emoji: '🛡️' },
-  { key: 'courtDispute',   label: 'Court Dispute',     color: '#fca5a5', emoji: '⚖️' },
-  { key: 'floodRisk',      label: 'Flood Risk',        color: '#67e8f9', emoji: '🌊' },
-  // Infrastructure
-  { key: 'highways',       label: 'Highways',          color: '#f97316', emoji: '🛣️' },
-  { key: 'railways',       label: 'Railways',          color: '#94a3b8', emoji: '🚂' },
-  // Labels
-  { key: 'villageLabels',  label: 'Village Labels',    color: '#94a3b8', emoji: '📍' },
+// ── Quick Filter Options ─────────────────────────────────────────────────────
+const QUICK_FILTERS = [
+  { value: "all", label: "Show All Parcels" },
+  { value: "private", label: "Only Private Land" },
+  { value: "government", label: "Only Government Land" },
+  { value: "panchayat", label: "Only Panchayat Land" },
+  { value: "forest", label: "Only Forest Land" },
+  { value: "risk", label: "Only Risk Areas" },
+  { value: "disputed", label: "Only Disputed Parcels" },
+  { value: "pending", label: "Only Pending Mutation" },
 ];
 
-// ── Component ─────────────────────────────────────────────────────────────────
+// ── Land type to layer key mapping ───────────────────────────────────────────
+const LAND_TO_LAYER: Record<ParcelLandType, keyof LayerVisibility> = {
+  Private: "privateLand",
+  Government: "governmentLand",
+  Panchayat: "panchayatLand",
+  Forest: "forestLand",
+  Mining: "miningZone",
+  Protected: "protectedArea",
+};
 
+// ── Component ────────────────────────────────────────────────────────────────
 export default function Dashboard() {
-  // Normal mode state
-  const [selectedParcel, setSelectedParcel] = useState<string | null>(null);
-  const [layerVisibility, setLayerVisibility] = useState<LayerVisibility>(DEFAULT_LAYER_VISIBILITY);
-  const [layerOpacity, setLayerOpacity] = useState<LayerOpacity>(DEFAULT_LAYER_OPACITY);
-
-  // Jaipur Local View state
-  const [isLocalMode, setIsLocalMode] = useState(false);
-  const [localParcels, setLocalParcels] = useState<JaipurParcel[]>(() =>
-    jaipurLocalParcels.map((p) => ({ ...p, lastUpdated: Date.now() }))
-  );
-  const [selectedLocalId, setSelectedLocalId] = useState<string | null>(null);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
-  const [, setTick] = useState(0); // force re-render for time-ago
+  const [quickFilter, setQuickFilter] = useState("all");
+  const [layers, setLayers] = useState<LayerVisibility>(DEFAULT_LAYER_VISIBILITY);
+  const [isDemoMode, setIsDemoMode] = useState(false);
+  const [demoStep, setDemoStep] = useState(0);
+  const [showDropdown, setShowDropdown] = useState(false);
 
-  // Normal mode parcel data
-  const parcelData = selectedParcel ? mockLandParcels.find((p) => p.id === selectedParcel) : null;
-  const localParcelData = selectedLocalId ? localParcels.find((p) => p.id === selectedLocalId) : null;
+  const selectedParcel = selectedId ? demoParcels.find((p) => p.id === selectedId) ?? null : null;
 
-  // ── Filtered local parcels for search ──────────────────────────────────────
-  const filteredLocalParcels = localParcels.filter((p) => {
-    if (!searchQuery.trim()) return true;
-    const q = searchQuery.toLowerCase();
-    return (
-      p.khasraNo.toLowerCase().includes(q) ||
-      p.ownerName.toLowerCase().includes(q) ||
-      "achrol".includes(q)
-    );
-  });
+  // ── Filtering ──────────────────────────────────────────────────────────────
+  const filteredParcels = useMemo(() => {
+    return demoParcels.filter((p) => {
+      // Layer visibility
+      const layerKey = LAND_TO_LAYER[p.landType];
+      if (!layers[layerKey]) return false;
+      if (p.disputed && !layers.courtDispute) return false;
 
-  // ── Real-time simulation (every 15s) ──────────────────────────────────────
+      // Quick filter
+      if (quickFilter === "private" && p.landType !== "Private") return false;
+      if (quickFilter === "government" && p.landType !== "Government") return false;
+      if (quickFilter === "panchayat" && p.landType !== "Panchayat") return false;
+      if (quickFilter === "forest" && p.landType !== "Forest" && p.landType !== "Protected") return false;
+      if (quickFilter === "risk" && p.riskLevel === "Safe") return false;
+      if (quickFilter === "disputed" && !p.disputed) return false;
+      if (quickFilter === "pending" && p.mutationStatus !== "Pending") return false;
+
+      // Search
+      if (searchQuery.trim()) {
+        const q = searchQuery.toLowerCase();
+        if (
+          !p.ownerName.toLowerCase().includes(q) &&
+          !p.khasraNo.toLowerCase().includes(q) &&
+          !p.ulpin.toLowerCase().includes(q) &&
+          !p.id.toLowerCase().includes(q)
+        ) return false;
+      }
+
+      return true;
+    });
+  }, [layers, quickFilter, searchQuery]);
+
+  const filteredIds = useMemo(() => new Set(filteredParcels.map((p) => p.id)), [filteredParcels]);
+  const stats = useMemo(() => getParcelStats(filteredParcels), [filteredParcels]);
+
+  // ── Demo Mode ──────────────────────────────────────────────────────────────
   useEffect(() => {
-    if (!isLocalMode) return;
+    if (!isDemoMode) return;
+    const step = DEMO_STEPS[demoStep];
+    setSelectedId(step.parcelId);
+    const timer = setTimeout(() => {
+      setDemoStep((s) => (s + 1) % DEMO_STEPS.length);
+    }, 6000);
+    return () => clearTimeout(timer);
+  }, [isDemoMode, demoStep]);
 
-    const interval = setInterval(() => {
-      setLocalParcels((prev) => {
-        const updated = [...prev];
-        // Pick 1–2 random parcels to update
-        const indices = new Set<number>();
-        while (indices.size < 2) indices.add(Math.floor(Math.random() * updated.length));
-        indices.forEach((i) => {
-          const p = { ...updated[i] };
-          // Randomly bump risk OR cycle dispute (not both at once)
-          if (Math.random() > 0.5) {
-            p.envRisk = bumpRisk(p.envRisk);
-          } else {
-            p.disputeStatus = cycleDispute(p.disputeStatus);
-          }
-          p.lastUpdated = Date.now();
-          updated[i] = p;
-        });
-        return updated;
-      });
-    }, 15000);
-
-    // Time-ago ticker (every 3s re-render)
-    const ticker = setInterval(() => setTick((t) => t + 1), 3000);
-
-    return () => {
-      clearInterval(interval);
-      clearInterval(ticker);
-    };
-  }, [isLocalMode]);
-
-  // Reset selection when switching modes
-  const toggleLocalMode = useCallback(() => {
-    setIsLocalMode((v) => !v);
-    setSelectedParcel(null);
-    setSelectedLocalId(null);
-    setSearchQuery("");
+  const toggleDemo = useCallback(() => {
+    setIsDemoMode((v) => {
+      if (!v) setDemoStep(0);
+      return !v;
+    });
   }, []);
 
-  // ── Layer toggle & opacity ────────────────────────────────────────────────
+  const resetFilters = useCallback(() => {
+    setSearchQuery("");
+    setQuickFilter("all");
+    setLayers(DEFAULT_LAYER_VISIBILITY);
+    setSelectedId(null);
+    setIsDemoMode(false);
+  }, []);
+
   const toggleLayer = (key: keyof LayerVisibility) =>
-    setLayerVisibility((v) => ({ ...v, [key]: !v[key] }));
+    setLayers((v) => ({ ...v, [key]: !v[key] }));
 
-  const setOpacity = (key: keyof LayerOpacity, val: number) =>
-    setLayerOpacity((v) => ({ ...v, [key]: val }));
+  // ── Demo banner data ───────────────────────────────────────────────────────
+  const currentDemoStep = isDemoMode ? DEMO_STEPS[demoStep] : null;
 
-  // ── Render ────────────────────────────────────────────────────────────────
+  // ── Render ─────────────────────────────────────────────────────────────────
   return (
     <div className="flex flex-col h-screen overflow-hidden bg-background">
 
-      {/* ── Top Navbar ─────────────────────────────────────────────────────── */}
-      <header className="h-14 border-b border-white/5 bg-background/80 backdrop-blur shrink-0 flex items-center justify-between px-4 z-10 gap-3">
-        <div className="flex items-center space-x-3 shrink-0">
+      {/* ── Top Bar ─────────────────────────────────────────────────────────── */}
+      <header className="h-12 border-b border-white/5 bg-background/80 backdrop-blur shrink-0 flex items-center justify-between px-4 z-10 gap-2">
+        <div className="flex items-center gap-2 shrink-0">
           <Link href="/">
-            <Button variant="ghost" size="icon" className="w-8 h-8 rounded-full">
-              <ArrowLeft className="w-4 h-4" />
+            <Button variant="ghost" size="icon" className="w-7 h-7 rounded-full">
+              <ArrowLeft className="w-3.5 h-3.5" />
             </Button>
           </Link>
-          <span className="font-bold text-sm tracking-tight gradient-text hidden sm:block">
-            DharaDrishti Dashboard
-          </span>
+          <span className="font-bold text-sm tracking-tight gradient-text hidden sm:block">DharaDrishti</span>
+          <span className="text-[10px] text-muted-foreground hidden sm:block">Achrol Village, Jaipur</span>
         </div>
 
-        {/* Global search (normal mode only) */}
-        {!isLocalMode && (
-          <div className="flex-1 max-w-sm mx-4 relative hidden sm:block">
-            <Search className="absolute left-2.5 top-2 w-4 h-4 text-muted-foreground" />
-            <Input
-              placeholder="Search village, district, survey no…"
-              className="pl-9 h-8 bg-background/50 border-white/10 text-xs"
-            />
-          </div>
-        )}
+        {/* Mini stats */}
+        <div className="flex items-center gap-1.5 overflow-x-auto hide-scrollbar">
+          {[
+            { label: "Total", value: stats.total, icon: <MapPin className="w-3 h-3" />, color: "#94a3b8" },
+            { label: "Private", value: stats.private, icon: <Home className="w-3 h-3" />, color: "#86efac" },
+            { label: "Govt", value: stats.government, icon: <Building2 className="w-3 h-3" />, color: "#93c5fd" },
+            { label: "Forest", value: stats.forest, icon: <TreePine className="w-3 h-3" />, color: "#4ade80" },
+            { label: "Disputed", value: stats.disputed, icon: <Scale className="w-3 h-3" />, color: "#fca5a5" },
+            { label: "Safe", value: stats.safe, icon: <Shield className="w-3 h-3" />, color: "#22c55e" },
+          ].map((s) => (
+            <div key={s.label} className="flex items-center gap-1 px-2 py-1 rounded-md bg-white/3 border border-white/5 shrink-0">
+              <span style={{ color: s.color }}>{s.icon}</span>
+              <span className="text-[10px] font-bold" style={{ color: s.color }}>{s.value}</span>
+              <span className="text-[9px] text-muted-foreground">{s.label}</span>
+            </div>
+          ))}
+        </div>
 
-        <div className="flex items-center gap-2 shrink-0">
-          {/* Jaipur Local View toggle button */}
-          <Button
-            onClick={toggleLocalMode}
-            size="sm"
-            className={`h-8 text-xs font-semibold gap-1.5 transition-all ${
-              isLocalMode
-                ? "bg-emerald-500 text-white hover:bg-emerald-600 shadow-lg shadow-emerald-500/30"
-                : "bg-white/5 border border-white/10 text-slate-300 hover:bg-emerald-500/10 hover:text-emerald-400 hover:border-emerald-500/30"
-            }`}
-          >
-            <MapPin className="w-3.5 h-3.5" />
-            Jaipur Local View
-            {isLocalMode && (
-              <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse ml-0.5" />
-            )}
+        <div className="flex items-center gap-1.5 shrink-0">
+          <Button onClick={toggleDemo} size="sm" className={`h-7 text-[10px] font-semibold gap-1 ${isDemoMode ? "bg-amber-500 text-black hover:bg-amber-600" : "bg-white/5 border border-white/10 text-slate-300 hover:bg-amber-500/10 hover:text-amber-400"}`}>
+            {isDemoMode ? <Pause className="w-3 h-3" /> : <Play className="w-3 h-3" />}
+            {isDemoMode ? "Stop Demo" : "Play Demo"}
           </Button>
-          <Button variant="ghost" size="icon" className="w-8 h-8 rounded-full">
-            <Bell className="w-4 h-4" />
-          </Button>
-          <Button variant="ghost" size="icon" className="w-8 h-8 rounded-full bg-emerald-500/10 text-emerald-400">
-            <User className="w-4 h-4" />
-          </Button>
+          <Button variant="ghost" size="icon" className="w-7 h-7 rounded-full"><Bell className="w-3.5 h-3.5" /></Button>
+          <Button variant="ghost" size="icon" className="w-7 h-7 rounded-full bg-emerald-500/10 text-emerald-400"><User className="w-3.5 h-3.5" /></Button>
         </div>
       </header>
+
+      {/* Demo mode banner */}
+      {isDemoMode && currentDemoStep && (
+        <div className="h-10 bg-amber-500/10 border-b border-amber-500/20 flex items-center justify-center gap-3 px-4 shrink-0">
+          <span className="text-lg">{currentDemoStep.icon}</span>
+          <div>
+            <span className="text-xs font-bold text-amber-400 mr-2">{currentDemoStep.title}</span>
+            <span className="text-[11px] text-amber-200/70">{currentDemoStep.message}</span>
+          </div>
+          <div className="flex gap-1 ml-4">
+            {DEMO_STEPS.map((_, i) => (
+              <span key={i} className={`w-1.5 h-1.5 rounded-full ${i === demoStep ? "bg-amber-400" : "bg-amber-400/30"}`} />
+            ))}
+          </div>
+        </div>
+      )}
 
       <div className="flex flex-1 overflow-hidden">
 
         {/* ── Left Sidebar ──────────────────────────────────────────────────── */}
         <aside className="w-64 border-r border-white/5 bg-background/50 flex flex-col shrink-0 hidden md:flex">
 
-          {isLocalMode ? (
-            /* ── Local Mode Sidebar ── */
-            <>
-              <div className="p-4 border-b border-white/5">
-                <div className="flex items-center gap-2 mb-3">
-                  <Zap className="w-4 h-4 text-emerald-400" />
-                  <h2 className="font-semibold text-sm text-emerald-400">Jaipur Local View</h2>
-                </div>
-                {/* Search */}
-                <div className="relative">
-                  <Search className="absolute left-2.5 top-2 w-3.5 h-3.5 text-muted-foreground" />
-                  <Input
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder="Village + Khasra No…"
-                    className="pl-8 h-8 bg-background/50 border-white/10 text-xs"
-                  />
-                  {searchQuery && (
+          {/* Search */}
+          <div className="p-3 border-b border-white/5">
+            <div className="relative">
+              <Search className="absolute left-2.5 top-2 w-3.5 h-3.5 text-muted-foreground" />
+              <Input
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Owner, Khasra, ULPIN..."
+                className="pl-8 h-8 bg-background/50 border-white/10 text-xs"
+              />
+              {searchQuery && (
+                <button className="absolute right-2 top-2 text-muted-foreground hover:text-white" onClick={() => setSearchQuery("")}>
+                  <X className="w-3 h-3" />
+                </button>
+              )}
+            </div>
+          </div>
+
+          {/* Quick Filter Dropdown */}
+          <div className="px-3 py-2 border-b border-white/5">
+            <div className="relative">
+              <button
+                className="w-full flex items-center justify-between h-8 px-3 rounded-md bg-white/5 border border-white/10 text-xs text-slate-300 hover:bg-white/8 transition-colors"
+                onClick={() => setShowDropdown(!showDropdown)}
+              >
+                <span>{QUICK_FILTERS.find((f) => f.value === quickFilter)?.label}</span>
+                <ChevronDown className={`w-3 h-3 transition-transform ${showDropdown ? "rotate-180" : ""}`} />
+              </button>
+              {showDropdown && (
+                <div className="absolute top-9 left-0 right-0 z-50 bg-slate-900 border border-white/10 rounded-lg shadow-xl overflow-hidden">
+                  {QUICK_FILTERS.map((f) => (
                     <button
-                      className="absolute right-2 top-2 text-muted-foreground hover:text-white"
-                      onClick={() => setSearchQuery("")}
+                      key={f.value}
+                      className={`w-full text-left px-3 py-1.5 text-xs hover:bg-white/8 transition-colors ${quickFilter === f.value ? "bg-emerald-500/10 text-emerald-400" : "text-slate-300"}`}
+                      onClick={() => { setQuickFilter(f.value); setShowDropdown(false); }}
                     >
-                      <X className="w-3.5 h-3.5" />
+                      {f.label}
                     </button>
-                  )}
-                </div>
-                <p className="text-[10px] text-muted-foreground mt-2">
-                  Achrol Village — {filteredLocalParcels.length} parcels
-                </p>
-              </div>
-
-              <ScrollArea className="flex-1">
-                <div className="p-2 space-y-1">
-                  {filteredLocalParcels.length === 0 ? (
-                    <p className="text-xs text-muted-foreground text-center py-8">No parcels match your search.</p>
-                  ) : (
-                    filteredLocalParcels.map((p) => {
-                      const riskColor = ENV_RISK_COLOR[p.envRisk];
-                      const disputeColor = DISPUTE_COLOR[p.disputeStatus];
-                      const isSelected = selectedLocalId === p.id;
-                      return (
-                        <button
-                          key={p.id}
-                          onClick={() => setSelectedLocalId(isSelected ? null : p.id)}
-                          className={`w-full text-left p-3 rounded-lg border transition-all duration-200 ${
-                            isSelected
-                              ? "bg-emerald-500/15 border-emerald-500/40 shadow-sm"
-                              : "bg-white/3 border-white/5 hover:bg-white/8 hover:border-white/15"
-                          }`}
-                        >
-                          <div className="flex items-start justify-between gap-2 mb-1">
-                            <span className="text-xs font-bold text-white">
-                              Khasra {p.khasraNo}
-                            </span>
-                            <span
-                              className="text-[9px] font-bold px-1.5 py-0.5 rounded-full shrink-0"
-                              style={{
-                                background: `${riskColor}25`,
-                                color: riskColor,
-                                border: `1px solid ${riskColor}45`,
-                              }}
-                            >
-                              {p.envRisk}
-                            </span>
-                          </div>
-                          <p className="text-[11px] text-slate-300 truncate">{p.ownerName}</p>
-                          <div className="flex items-center justify-between mt-1.5">
-                            <span
-                              className="text-[9px] font-semibold"
-                              style={{ color: disputeColor }}
-                            >
-                              ● {p.disputeStatus}
-                            </span>
-                            <span className="text-[9px] text-muted-foreground flex items-center gap-1">
-                              <Clock className="w-2.5 h-2.5" />
-                              {timeAgo(p.lastUpdated ?? Date.now())}
-                            </span>
-                          </div>
-                        </button>
-                      );
-                    })
-                  )}
-                </div>
-              </ScrollArea>
-
-              {/* Live pulse indicator */}
-              <div className="p-3 border-t border-white/5">
-                <div className="flex items-center gap-2 text-[10px] text-muted-foreground">
-                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shrink-0" />
-                  Live simulation — updates every 15s
-                </div>
-              </div>
-            </>
-          ) : (
-            /* ── Normal Mode Sidebar ── */
-            <>
-              <div className="p-4 border-b border-white/5 flex items-center justify-between">
-                <h2 className="font-semibold text-sm flex items-center">
-                  <Filter className="w-4 h-4 mr-2" /> Map Layers
-                </h2>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="h-6 px-2 text-[10px] text-muted-foreground hover:text-white gap-1"
-                  onClick={() => {
-                    setLayerVisibility(DEFAULT_LAYER_VISIBILITY);
-                    setLayerOpacity(DEFAULT_LAYER_OPACITY);
-                  }}
-                  title="Reset all layers to default"
-                >
-                  <RotateCcw className="w-2.5 h-2.5" /> Reset
-                </Button>
-              </div>
-
-              <ScrollArea className="flex-1 p-4">
-                <div className="space-y-5">
-                  {/* Layer toggles */}
-                  {LAYER_META.map(({ key, label, color, emoji }) => (
-                    <div key={key}>
-                      <div className="flex items-center justify-between mb-1.5">
-                        <label className="flex items-center gap-2 text-sm cursor-pointer select-none">
-                          <input
-                            type="checkbox"
-                            checked={layerVisibility[key]}
-                            onChange={() => toggleLayer(key)}
-                            className="accent-emerald-500 w-3.5 h-3.5"
-                          />
-                          <span
-                            className="w-3 h-3 rounded-sm shrink-0"
-                            style={{ background: color }}
-                          />
-                          {emoji} {label}
-                        </label>
-                        <span className="text-[10px] text-muted-foreground">
-                          {Math.round(layerOpacity[key as keyof LayerOpacity] * 100)}%
-                        </span>
-                      </div>
-                      {/* Opacity slider */}
-                      {layerVisibility[key] && (
-                        <input
-                          type="range"
-                          min="0.1"
-                          max="1"
-                          step="0.05"
-                          value={layerOpacity[key as keyof LayerOpacity]}
-                          onChange={(e) => setOpacity(key as keyof LayerOpacity, parseFloat(e.target.value))}
-                          className="w-full h-1 accent-emerald-500 cursor-pointer"
-                          style={{ accentColor: color }}
-                        />
-                      )}
-                    </div>
                   ))}
+                </div>
+              )}
+            </div>
+          </div>
 
-                  {/* View presets */}
-                  <div className="pt-3 border-t border-white/5">
-                    <h3 className="text-xs font-semibold uppercase text-muted-foreground mb-2">Quick Presets</h3>
-                    <div className="space-y-1.5">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="w-full justify-start h-7 text-xs bg-white/5 border-white/5"
-                        onClick={() => setLayerVisibility(DEFAULT_LAYER_VISIBILITY)}
-                      >
-                        <Layers className="w-3 h-3 mr-1.5" /> Default View
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="w-full justify-start h-7 text-xs bg-transparent border-transparent text-red-400"
-                        onClick={() =>
-                          setLayerVisibility((v) => ({
-                            ...v,
-                            miningZone: true, courtDispute: true, protectedArea: true,
-                            privateLand: false, governmentLand: false, panchayatLand: false,
-                            forestLand: false, floodRisk: false,
-                          }))
-                        }
-                      >
-                        <Activity className="w-3 h-3 mr-1.5 text-red-400" /> Risk Only
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="w-full justify-start h-7 text-xs bg-transparent border-transparent text-emerald-400"
-                        onClick={() =>
-                          setLayerVisibility((v) => ({
-                            ...v,
-                            forestLand: true, protectedArea: true,
-                            miningZone: false, courtDispute: false, floodRisk: false,
-                            privateLand: false, governmentLand: false, panchayatLand: false,
-                          }))
-                        }
-                      >
-                        <Activity className="w-3 h-3 mr-1.5 text-emerald-400" /> Forest / Protected
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="w-full justify-start h-7 text-xs bg-transparent border-transparent text-cyan-400"
-                        onClick={() =>
-                          setLayerVisibility((v) => ({
-                            ...v,
-                            floodRisk: true,
-                            miningZone: false, courtDispute: false, protectedArea: false,
-                            forestLand: false,
-                          }))
-                        }
-                      >
-                        <Activity className="w-3 h-3 mr-1.5 text-cyan-400" /> Flood Zones
-                      </Button>
-                    </div>
+          {/* Layer filter groups */}
+          <ScrollArea className="flex-1">
+            <div className="p-3 space-y-3">
+              {LAYER_GROUPS.map((group) => (
+                <div key={group.title}>
+                  <h3 className="text-[10px] font-semibold uppercase text-muted-foreground mb-2 flex items-center gap-1.5">
+                    <span>{group.emoji}</span> {group.title}
+                  </h3>
+                  <div className="space-y-1">
+                    {group.keys.map(({ key, label, color }) => (
+                      <label key={key} className="flex items-center gap-2 text-xs cursor-pointer select-none py-0.5 hover:bg-white/3 px-1.5 rounded">
+                        <input
+                          type="checkbox"
+                          checked={layers[key]}
+                          onChange={() => toggleLayer(key)}
+                          className="accent-emerald-500 w-3 h-3"
+                        />
+                        <span className="w-2.5 h-2.5 rounded-sm shrink-0" style={{ background: color }} />
+                        <span className="text-slate-300">{label}</span>
+                      </label>
+                    ))}
                   </div>
                 </div>
-              </ScrollArea>
-            </>
-          )}
+              ))}
+
+              {/* Quick Stats Card */}
+              <div className="mt-2 p-3 rounded-lg bg-white/3 border border-white/5">
+                <h3 className="text-[10px] font-semibold uppercase text-muted-foreground mb-2">📊 Quick Stats</h3>
+                <div className="grid grid-cols-2 gap-1.5">
+                  {[
+                    { label: "Pending Mutation", value: stats.pendingMutation, color: "#f59e0b" },
+                    { label: "Flood Risk", value: stats.floodRisk, color: "#22d3ee" },
+                    { label: "Mining", value: stats.mining, color: "#fb923c" },
+                    { label: "Panchayat", value: stats.panchayat, color: "#fde68a" },
+                  ].map((s) => (
+                    <div key={s.label} className="text-center py-1.5 rounded bg-black/20 border border-white/5">
+                      <div className="text-sm font-bold" style={{ color: s.color }}>{s.value}</div>
+                      <div className="text-[9px] text-muted-foreground">{s.label}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Reset */}
+              <Button onClick={resetFilters} variant="outline" size="sm" className="w-full h-7 text-xs bg-white/3 border-white/10 gap-1.5 mt-1">
+                <RotateCcw className="w-3 h-3" /> Reset Filters
+              </Button>
+            </div>
+          </ScrollArea>
+
+          <div className="p-3 border-t border-white/5 text-[9px] text-muted-foreground text-center">
+            Showing {filteredParcels.length} of {demoParcels.length} parcels
+          </div>
         </aside>
 
-        {/* ── Center Map ───────────────────────────────────────────────────── */}
-        <main className="flex-1 relative p-4 pl-0 md:pl-4 overflow-hidden">
+        {/* ── Center Map ─────────────────────────────────────────────────────── */}
+        <main className="flex-1 relative overflow-hidden p-2">
           <MapViewer
-            onSelectParcel={setSelectedParcel}
-            selectedParcelId={selectedParcel}
-            layerVisibility={layerVisibility}
-            layerOpacity={layerOpacity}
-            isLocalMode={isLocalMode}
-            localParcels={localParcels}
-            selectedLocalId={selectedLocalId}
-            onSelectLocal={setSelectedLocalId}
+            selectedParcelId={selectedId}
+            onSelectParcel={setSelectedId}
+            layers={layers}
+            filteredParcelIds={searchQuery || quickFilter !== "all" ? filteredIds : undefined}
           />
         </main>
 
         {/* ── Right Panel — Parcel Details ────────────────────────────────── */}
-        {(selectedParcel || selectedLocalId) && (
-          <aside className="w-80 border-l border-white/5 bg-background/90 backdrop-blur-xl shrink-0 flex flex-col shadow-[-20px_0_40px_rgba(0,0,0,0.5)] z-20 animate-in slide-in-from-right-10 duration-300 relative">
-            <div className="p-4 flex items-center justify-between border-b border-white/5">
-              <h2 className="font-semibold text-sm">
-                {isLocalMode ? "Parcel Details" : "Parcel Details"}
-              </h2>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="w-6 h-6 rounded-full"
-                onClick={() => {
-                  setSelectedParcel(null);
-                  setSelectedLocalId(null);
-                }}
-              >
-                <X className="w-3 h-3" />
-              </Button>
-            </div>
+        <aside className={`${selectedParcel ? "w-80" : "w-72"} border-l border-white/5 bg-background/90 backdrop-blur-xl shrink-0 flex flex-col shadow-[-10px_0_30px_rgba(0,0,0,0.4)] z-20 hidden md:flex`}>
+          {selectedParcel ? (
+            <>
+              {/* Header */}
+              <div className="p-3 flex items-center justify-between border-b border-white/5">
+                <h2 className="font-semibold text-sm">Parcel Details</h2>
+                <Button variant="ghost" size="icon" className="w-6 h-6 rounded-full" onClick={() => setSelectedId(null)}>
+                  <X className="w-3 h-3" />
+                </Button>
+              </div>
 
-            <ScrollArea className="flex-1 p-4">
-              {isLocalMode && localParcelData ? (
-                /* ── Local Mode Detail ── */
-                <div className="space-y-4">
-                  <div className="glass-panel p-4 rounded-xl border border-white/5 bg-white/5">
-                    <div className="flex justify-between items-start mb-2">
-                      <p className="text-xs text-muted-foreground">Khasra No.</p>
-                      <Badge variant="outline" className="border-emerald-500/30 text-emerald-400 bg-emerald-500/10 text-xs">
-                        {localParcelData.khasraNo}
-                      </Badge>
-                    </div>
-                    <h3 className="text-lg font-bold mb-0.5">{localParcelData.ownerName}</h3>
-                    <p className="text-xs text-muted-foreground">Achrol Village, Jaipur, Rajasthan</p>
-                  </div>
+              <ScrollArea className="flex-1">
+                <div className="p-3 space-y-3">
 
-                  <div className="grid grid-cols-2 gap-2">
-                    <div className="bg-black/20 p-3 rounded-lg border border-white/5">
-                      <p className="text-[10px] text-muted-foreground uppercase tracking-wider mb-1">Land Type</p>
-                      <p className="font-semibold text-sm">{localParcelData.landType}</p>
-                    </div>
-                    <div className="bg-black/20 p-3 rounded-lg border border-white/5">
-                      <p className="text-[10px] text-muted-foreground uppercase tracking-wider mb-1">Owner Type</p>
-                      <p className="font-semibold text-sm">{localParcelData.ownerType}</p>
-                    </div>
-                    <div className="bg-black/20 p-3 rounded-lg border border-white/5">
-                      <p className="text-[10px] text-muted-foreground uppercase tracking-wider mb-1">Area</p>
-                      <p className="font-semibold text-sm">{localParcelData.areaHectares} ha</p>
-                    </div>
-                    <div className="bg-black/20 p-3 rounded-lg border border-white/5">
-                      <p className="text-[10px] text-muted-foreground uppercase tracking-wider mb-1">Updated</p>
-                      <p className="font-semibold text-xs text-emerald-400">
-                        {timeAgo(localParcelData.lastUpdated ?? Date.now())}
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* Dispute Status */}
-                  <div
-                    className="p-3 rounded-xl border"
-                    style={{
-                      background: `${DISPUTE_COLOR[localParcelData.disputeStatus]}12`,
-                      borderColor: `${DISPUTE_COLOR[localParcelData.disputeStatus]}30`,
-                    }}
-                  >
-                    <p className="text-[10px] uppercase tracking-wider font-semibold text-muted-foreground mb-1">
-                      Dispute Status
-                    </p>
+                  {/* Recommendation Badge */}
+                  <div className="p-3 rounded-xl border" style={{
+                    background: RECOMMENDATION_COLORS[selectedParcel.recommendation].bg,
+                    borderColor: RECOMMENDATION_COLORS[selectedParcel.recommendation].text + "30",
+                  }}>
                     <div className="flex items-center gap-2">
-                      <span
-                        className="w-2.5 h-2.5 rounded-full animate-pulse shrink-0"
-                        style={{ background: DISPUTE_COLOR[localParcelData.disputeStatus] }}
-                      />
-                      <span
-                        className="text-sm font-bold"
-                        style={{ color: DISPUTE_COLOR[localParcelData.disputeStatus] }}
-                      >
-                        {localParcelData.disputeStatus}
+                      <Shield className="w-4 h-4" style={{ color: RECOMMENDATION_COLORS[selectedParcel.recommendation].text }} />
+                      <span className="text-sm font-bold" style={{ color: RECOMMENDATION_COLORS[selectedParcel.recommendation].text }}>
+                        {selectedParcel.recommendation}
                       </span>
                     </div>
                   </div>
 
-                  {/* Environmental Risk */}
-                  <div
-                    className="p-3 rounded-xl border"
-                    style={{
-                      background: `${ENV_RISK_COLOR[localParcelData.envRisk]}12`,
-                      borderColor: `${ENV_RISK_COLOR[localParcelData.envRisk]}30`,
-                    }}
-                  >
-                    <p className="text-[10px] uppercase tracking-wider font-semibold text-muted-foreground mb-1">
-                      Environmental Risk
-                    </p>
-                    <div className="flex items-center gap-2">
-                      <AlertTriangle
-                        className="w-4 h-4 shrink-0"
-                        style={{ color: ENV_RISK_COLOR[localParcelData.envRisk] }}
-                      />
-                      <span
-                        className="text-sm font-bold"
-                        style={{ color: ENV_RISK_COLOR[localParcelData.envRisk] }}
-                      >
-                        {localParcelData.envRisk} Risk
-                      </span>
-                    </div>
+                  {/* Risk + Mutation Tags */}
+                  <div className="flex flex-wrap gap-1.5">
+                    <span className="px-2 py-0.5 rounded-full text-[10px] font-bold" style={{
+                      background: RISK_TAG_COLORS[selectedParcel.riskLevel].bg,
+                      color: RISK_TAG_COLORS[selectedParcel.riskLevel].text,
+                    }}>{selectedParcel.riskLevel}</span>
+                    <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
+                      selectedParcel.mutationStatus === "Mutated" ? "bg-green-500/15 text-green-400" :
+                      selectedParcel.mutationStatus === "Pending" ? "bg-yellow-500/15 text-yellow-400" :
+                      "bg-red-500/15 text-red-400"
+                    }`}>{selectedParcel.mutationStatus}</span>
+                    {selectedParcel.disputed && <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-red-500/15 text-red-400">Disputed</span>}
+                    {selectedParcel.floodRisk && <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-cyan-500/15 text-cyan-400">Flood Risk</span>}
+                    <span className="px-2 py-0.5 rounded-full text-[10px] font-bold" style={{
+                      background: LAND_TYPE_COLORS[selectedParcel.landType].fill + "25",
+                      color: LAND_TYPE_COLORS[selectedParcel.landType].border,
+                    }}>{selectedParcel.landType}</span>
                   </div>
 
-                  {/* Live update indicator */}
-                  <div className="flex items-center gap-2 text-[10px] text-muted-foreground p-2 rounded-lg bg-white/3 border border-white/5">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse shrink-0" />
-                    Live — data refreshes every 15 seconds
-                  </div>
+                  {/* Owner Info */}
+                  <Section title="👤 Owner Information">
+                    <Row label="Owner" value={selectedParcel.ownerName} />
+                    <Row label="Previous Owner" value={selectedParcel.previousOwner} />
+                    <Row label="Ownership Type" value={selectedParcel.landType} />
+                  </Section>
 
-                  {/* Disclaimer */}
-                  <div className="flex items-start gap-2 text-[10px] text-muted-foreground p-3 rounded-lg bg-amber-500/5 border border-amber-500/15">
-                    <Info className="w-3.5 h-3.5 text-amber-400 shrink-0 mt-0.5" />
-                    <span>
-                      <strong className="text-amber-400">Demo only</strong> — uses sample data for hackathon purposes. Not official government data.
-                    </span>
-                  </div>
-                </div>
-              ) : (
-                /* ── Normal Mode Detail ── */
-                <div className="space-y-4">
-                  <div className="glass-panel p-4 rounded-xl border border-white/5 bg-white/5">
-                    <div className="flex justify-between items-start mb-2">
-                      <p className="text-xs text-muted-foreground">Survey No.</p>
-                      <Badge variant="outline" className="border-emerald-500/30 text-emerald-400 bg-emerald-500/10">
-                        {parcelData?.surveyNumber}
-                      </Badge>
-                    </div>
-                    <h3 className="text-lg font-bold mb-1">{parcelData?.ownerName || 'Unknown Owner'}</h3>
-                    <p className="text-xs text-muted-foreground">{parcelData?.village}, {parcelData?.district}</p>
-                  </div>
+                  {/* Parcel Info */}
+                  <Section title="📋 Parcel Information">
+                    <Row label="Khasra No." value={selectedParcel.khasraNo} highlight />
+                    <Row label="ULPIN" value={selectedParcel.ulpin} mono />
+                    <Row label="Parcel ID" value={selectedParcel.id} mono />
+                    <Row label="Area" value={`${selectedParcel.areaHectares} ha (${selectedParcel.areaAcres} acres)`} />
+                    <Row label="Last Survey" value={selectedParcel.lastSurveyDate} />
+                    <Row label="Last Updated" value={selectedParcel.lastUpdateDate} />
+                  </Section>
 
-                  <div className="grid grid-cols-2 gap-2">
-                    <div className="bg-black/20 p-3 rounded-lg border border-white/5">
-                      <p className="text-[10px] text-muted-foreground uppercase tracking-wider mb-1">Land Type</p>
-                      <p className="font-semibold text-sm">{parcelData?.landType}</p>
-                    </div>
-                    <div className="bg-black/20 p-3 rounded-lg border border-white/5">
-                      <p className="text-[10px] text-muted-foreground uppercase tracking-wider mb-1">Ownership</p>
-                      <p className="font-semibold text-sm">{parcelData?.ownershipType}</p>
-                    </div>
-                  </div>
-
-                  <AIPanel parcelId={selectedParcel!} />
-
-                  {(parcelData?.acquisitionRiskScore ?? 0) > 50 && (
-                    <div className="mt-2 glass-panel border border-red-500/20 bg-red-500/5 p-4 rounded-xl">
-                      <h4 className="text-xs font-bold text-red-500 mb-2 uppercase tracking-wide">High Risk Identified</h4>
-                      <p className="text-xs text-foreground/80 mb-1">Score: {parcelData?.acquisitionRiskScore}/100</p>
-                      <p className="text-[10px] text-muted-foreground">Area overlaps with sensitive zones or disputes.</p>
-                    </div>
+                  {/* Nearby Risks */}
+                  {selectedParcel.nearbyRisks.length > 0 && (
+                    <Section title="⚠️ Nearby Risks">
+                      {selectedParcel.nearbyRisks.map((r) => (
+                        <div key={r} className="flex items-center gap-2 text-xs py-0.5">
+                          <AlertTriangle className="w-3 h-3 text-amber-400 shrink-0" />
+                          <span className="text-slate-300">{r}</span>
+                        </div>
+                      ))}
+                    </Section>
                   )}
 
-                  {/* Disclaimer */}
-                  <div className="flex items-start gap-2 text-[10px] text-muted-foreground p-3 rounded-lg bg-amber-500/5 border border-amber-500/15">
-                    <Info className="w-3.5 h-3.5 text-amber-400 shrink-0 mt-0.5" />
-                    <span>
-                      <strong className="text-amber-400">Demo only</strong> — uses sample data for hackathon purposes.
-                    </span>
-                  </div>
-                </div>
-              )}
-            </ScrollArea>
+                  {/* Nearby Features */}
+                  <Section title="📍 Nearby Features">
+                    {selectedParcel.nearbyFeatures.map((f) => (
+                      <div key={f.feature} className="flex items-center justify-between text-xs py-0.5">
+                        <span className="text-slate-400">{f.feature}</span>
+                        <span className="text-slate-300 font-mono text-[10px]">{f.distance} {f.direction}</span>
+                      </div>
+                    ))}
+                  </Section>
 
-            <div className="p-4 border-t border-white/5">
-              <Button className="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-semibold">
-                <Download className="w-4 h-4 mr-2" /> Download PDF Report
-              </Button>
+                  {/* Mutation History */}
+                  {selectedParcel.mutationHistory.length > 0 && (
+                    <Section title="📜 Mutation History">
+                      <div className="space-y-2">
+                        {selectedParcel.mutationHistory.map((m, i) => (
+                          <div key={i} className="pl-3 border-l-2 border-white/10 text-[11px]">
+                            <div className="text-slate-300 font-semibold">{m.type}</div>
+                            <div className="text-muted-foreground">{m.from} → {m.to}</div>
+                            <div className="text-muted-foreground flex items-center gap-1 mt-0.5">
+                              <Clock className="w-2.5 h-2.5" /> {m.date}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </Section>
+                  )}
+                </div>
+              </ScrollArea>
+
+              {/* Download */}
+              <div className="p-3 border-t border-white/5">
+                <Button className="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-semibold h-8 text-xs">
+                  <Download className="w-3.5 h-3.5 mr-1.5" /> Download Report
+                </Button>
+              </div>
+            </>
+          ) : (
+            /* Empty State */
+            <div className="flex-1 flex flex-col items-center justify-center px-6 text-center">
+              <div className="w-16 h-16 rounded-2xl bg-white/3 border border-white/5 flex items-center justify-center mb-4">
+                <FileText className="w-7 h-7 text-muted-foreground" />
+              </div>
+              <h3 className="font-semibold text-sm text-slate-300 mb-1">No Parcel Selected</h3>
+              <p className="text-xs text-muted-foreground leading-relaxed">
+                Click on any parcel on the map to view ownership details, risk assessment, mutation history, and nearby features.
+              </p>
+              <div className="mt-6 text-[10px] text-muted-foreground space-y-1.5">
+                <div className="flex items-center gap-2"><span className="w-2 h-2 rounded-sm bg-[#86efac]" /> Private Land</div>
+                <div className="flex items-center gap-2"><span className="w-2 h-2 rounded-sm bg-[#93c5fd]" /> Government Land</div>
+                <div className="flex items-center gap-2"><span className="w-2 h-2 rounded-sm bg-[#fde68a]" /> Panchayat Land</div>
+                <div className="flex items-center gap-2"><span className="w-2 h-2 rounded-sm bg-[#4ade80]" /> Forest Land</div>
+                <div className="flex items-center gap-2"><span className="w-2 h-2 rounded-sm bg-[#fb923c]" /> Mining Zone</div>
+                <div className="flex items-center gap-2"><span className="w-2 h-2 rounded-sm bg-[#c4b5fd]" /> Protected Area</div>
+              </div>
             </div>
-          </aside>
-        )}
+          )}
+        </aside>
       </div>
+    </div>
+  );
+}
+
+// ── Reusable sub-components ──────────────────────────────────────────────────
+
+function Section({ title, children }: { title: string; children: React.ReactNode }) {
+  return (
+    <div className="p-3 rounded-lg bg-white/3 border border-white/5">
+      <h4 className="text-[10px] font-semibold uppercase text-muted-foreground mb-2">{title}</h4>
+      <div className="space-y-1">{children}</div>
+    </div>
+  );
+}
+
+function Row({ label, value, highlight, mono }: { label: string; value: string; highlight?: boolean; mono?: boolean }) {
+  return (
+    <div className="flex items-start justify-between gap-2 text-xs">
+      <span className="text-muted-foreground shrink-0">{label}</span>
+      <span className={`text-right ${highlight ? "font-bold text-emerald-400" : "text-slate-300"} ${mono ? "font-mono text-[10px]" : ""}`}>
+        {value}
+      </span>
     </div>
   );
 }
