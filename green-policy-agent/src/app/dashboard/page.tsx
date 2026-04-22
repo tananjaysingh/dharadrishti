@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import {
   ArrowLeft, Filter, Search, Download, Layers, Activity, User, Bell,
-  MapPin, Zap, AlertTriangle, Clock, X, ChevronRight, Info
+  MapPin, Zap, AlertTriangle, Clock, X, Info, RotateCcw
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -45,11 +45,21 @@ function timeAgo(ts: number): string {
 }
 
 const LAYER_META: { key: keyof LayerVisibility; label: string; color: string; emoji: string }[] = [
-  { key: 'parcels',       label: 'Land Parcels',     color: '#a8a29e', emoji: '🟫' },
-  { key: 'riskZones',     label: 'Risk / Mining',    color: '#ef4444', emoji: '🔴' },
-  { key: 'forestCover',   label: 'Forest Cover',     color: '#064e3b', emoji: '🌲' },
-  { key: 'highways',      label: 'Road Network',     color: '#f97316', emoji: '🛣' },
-  { key: 'villageLabels', label: 'Village Labels',   color: '#94a3b8', emoji: '📍' },
+  // Ownership layers
+  { key: 'privateLand',    label: 'Private Land',      color: '#86efac', emoji: '🟩' },
+  { key: 'governmentLand', label: 'Government Land',   color: '#93c5fd', emoji: '🟦' },
+  { key: 'panchayatLand',  label: 'Panchayat Land',   color: '#fde68a', emoji: '🟨' },
+  { key: 'forestLand',     label: 'Forest Land',       color: '#4ade80', emoji: '🌲' },
+  // Zone / risk layers
+  { key: 'miningZone',     label: 'Mining Zone',       color: '#fb923c', emoji: '⛏️' },
+  { key: 'protectedArea',  label: 'Protected Area',    color: '#c4b5fd', emoji: '🛡️' },
+  { key: 'courtDispute',   label: 'Court Dispute',     color: '#fca5a5', emoji: '⚖️' },
+  { key: 'floodRisk',      label: 'Flood Risk',        color: '#67e8f9', emoji: '🌊' },
+  // Infrastructure
+  { key: 'highways',       label: 'Highways',          color: '#f97316', emoji: '🛣️' },
+  { key: 'railways',       label: 'Railways',          color: '#94a3b8', emoji: '🚂' },
+  // Labels
+  { key: 'villageLabels',  label: 'Village Labels',    color: '#94a3b8', emoji: '📍' },
 ];
 
 // ── Component ─────────────────────────────────────────────────────────────────
@@ -292,6 +302,18 @@ export default function Dashboard() {
                 <h2 className="font-semibold text-sm flex items-center">
                   <Filter className="w-4 h-4 mr-2" /> Map Layers
                 </h2>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-6 px-2 text-[10px] text-muted-foreground hover:text-white gap-1"
+                  onClick={() => {
+                    setLayerVisibility(DEFAULT_LAYER_VISIBILITY);
+                    setLayerOpacity(DEFAULT_LAYER_OPACITY);
+                  }}
+                  title="Reset all layers to default"
+                >
+                  <RotateCcw className="w-2.5 h-2.5" /> Reset
+                </Button>
               </div>
 
               <ScrollArea className="flex-1 p-4">
@@ -333,37 +355,6 @@ export default function Dashboard() {
                     </div>
                   ))}
 
-                  {/* Static legend */}
-                  <div className="pt-3 border-t border-white/5">
-                    <h3 className="text-xs font-semibold uppercase text-muted-foreground mb-3 flex items-center gap-1">
-                      <Layers className="w-3 h-3" /> Legend
-                    </h3>
-                    <div className="space-y-2">
-                      {[
-                        { color: '#10b981', label: 'Forest Land' },
-                        { color: '#3b82f6', label: 'Government' },
-                        { color: '#eab308', label: 'Panchayat' },
-                        { color: '#a8a29e', label: 'Private' },
-                        { color: '#ef4444', label: 'Mining / Risk' },
-                      ].map((item) => (
-                        <div key={item.label} className="flex items-center gap-2 text-xs text-slate-400">
-                          <span
-                            className="w-3 h-3 rounded-sm shrink-0"
-                            style={{ background: item.color }}
-                          />
-                          {item.label}
-                        </div>
-                      ))}
-                      <div className="flex items-center gap-2 text-xs text-slate-400">
-                        <span
-                          className="w-3 h-3 rounded-sm shrink-0 border border-red-500"
-                          style={{ background: 'transparent', borderStyle: 'dashed' }}
-                        />
-                        Disputed Parcel
-                      </div>
-                    </div>
-                  </div>
-
                   {/* View presets */}
                   <div className="pt-3 border-t border-white/5">
                     <h3 className="text-xs font-semibold uppercase text-muted-foreground mb-2">Quick Presets</h3>
@@ -381,7 +372,12 @@ export default function Dashboard() {
                         size="sm"
                         className="w-full justify-start h-7 text-xs bg-transparent border-transparent text-red-400"
                         onClick={() =>
-                          setLayerVisibility((v) => ({ ...v, riskZones: true, forestCover: false, highways: false }))
+                          setLayerVisibility((v) => ({
+                            ...v,
+                            miningZone: true, courtDispute: true, protectedArea: true,
+                            privateLand: false, governmentLand: false, panchayatLand: false,
+                            forestLand: false, floodRisk: false,
+                          }))
                         }
                       >
                         <Activity className="w-3 h-3 mr-1.5 text-red-400" /> Risk Only
@@ -391,10 +387,30 @@ export default function Dashboard() {
                         size="sm"
                         className="w-full justify-start h-7 text-xs bg-transparent border-transparent text-emerald-400"
                         onClick={() =>
-                          setLayerVisibility((v) => ({ ...v, forestCover: true, riskZones: false, highways: false }))
+                          setLayerVisibility((v) => ({
+                            ...v,
+                            forestLand: true, protectedArea: true,
+                            miningZone: false, courtDispute: false, floodRisk: false,
+                            privateLand: false, governmentLand: false, panchayatLand: false,
+                          }))
                         }
                       >
-                        <Activity className="w-3 h-3 mr-1.5 text-emerald-400" /> Forest Coverage
+                        <Activity className="w-3 h-3 mr-1.5 text-emerald-400" /> Forest / Protected
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="w-full justify-start h-7 text-xs bg-transparent border-transparent text-cyan-400"
+                        onClick={() =>
+                          setLayerVisibility((v) => ({
+                            ...v,
+                            floodRisk: true,
+                            miningZone: false, courtDispute: false, protectedArea: false,
+                            forestLand: false,
+                          }))
+                        }
+                      >
+                        <Activity className="w-3 h-3 mr-1.5 text-cyan-400" /> Flood Zones
                       </Button>
                     </div>
                   </div>
